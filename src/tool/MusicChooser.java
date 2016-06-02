@@ -1,4 +1,4 @@
-package lin.tool;
+package tool;
 
 import javax.swing.JFileChooser;
 

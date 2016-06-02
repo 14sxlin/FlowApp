@@ -1,4 +1,4 @@
-package lin.gui;
+package gui;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -17,17 +17,17 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
-import lin.readwrite.AccountManager;
-import lin.readwrite.ConfigAutoLogin;
-import lin.readwrite.ConfigAutoSelect;
-import lin.readwrite.ReadStatus;
-import lin.readwrite.ResourcePath;
-import lin.tool.PlayMusic;
-import lin.tool.SendLoginRequest;
+import readwrite.AccountManager;
+import readwrite.ConfigAutoLogin;
+import readwrite.ConfigAutoSelect;
+import readwrite.ResourcePath;
+import readwrite.WebStatus;
+import tool.PlayMusic;
+import tool.SendLoginRequest;
 
 @SuppressWarnings("serial")
 public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListener {
-
+	private WebStatus ws;
 	private JFrame parent;
 	public  JComboBox<String> accountSelectCombo;
 	public  static JButton loginButton;
@@ -46,8 +46,9 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 	private AccountManager am;
 	//记录是不是初始化的时候的激发的自动选择
 	public 	int i=0;
-	public ButtonAreaPanel(JFrame parent,AccountManager am) {
+	public ButtonAreaPanel(JFrame parent,AccountManager am,WebStatus ws) {
 		this.am = am;
+		this.ws = ws;
 		this.parent = parent;
 		this.setLayout(new GridLayout(3, 2));
 		alarmButton=new JButton("设置提醒");
@@ -71,10 +72,10 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		
 		loginButton=new JButton("登录");
 		loginButton.addActionListener(e->{
-			if(!ReadStatus.WebLost)
+			if(!ws.isWebLost)
 			{	
 				String temp=((String) accountSelectCombo.getSelectedItem()).trim();		
-				if(temp!=null&&ReadStatus.loginStatus==ReadStatus.OUT)
+				if(temp!=null&&ws.loginStatus==WebStatus.OUT)
 				{	
 					params=am.accountMap.get(temp);
 					try {
@@ -104,11 +105,11 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		
 		//启动时间器
 		timer=new Timer(1000, this);
-		if(!ReadStatus.WebLost)
+		if(!ws.isWebLost)
 			timer.start();
 		else loginButton.setEnabled(false);
 //System.out.println("loginState="+ReadStatus.loginStatus);
-		if(ReadStatus.loginStatus==ReadStatus.IN)
+		if(ws.loginStatus==WebStatus.IN)
 			loginButton.setEnabled(false);
 		
 //System.out.println("Class= "+this.getClass().getResource("").getPath());
@@ -134,8 +135,8 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		else autoSelectChBox.setSelected(false);
 		
 		//流量提醒的检查
-		if(!ReadStatus.WebLost&&(alarmhasSet)&&(Integer.parseInt(ReadStatus.subNum(ReadStatus.usedAmount))
-				>=AlarmSettingDialog.alarmAmount))
+		if(!ws.isWebLost&&(alarmhasSet)&&
+				ws.usedAmount>=AlarmSettingDialog.alarmAmount)
 		{
 //System.out.println("provoke!");
 			music=new PlayMusic(AlarmSettingDialog.musicPath,true);
@@ -148,7 +149,7 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		if(action.equals("设置提醒"))//这里如果用getAccom..会报错 为毛啊?因为时间器执行的时候没有激发事件
 		{	FlowAppMainFrame.inside=true;
 			try {
-				new AlarmSettingDialog(ReadStatus.subNum(ReadStatus.totalAmount));
+				new AlarmSettingDialog(ws.totalAmount);
 			} catch (UnsupportedEncodingException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -165,8 +166,8 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		}
 		
 		//登录按钮的检查
-		if(!ReadStatus.WebLost)
-		{	if(ReadStatus.loginStatus==1)
+		if(!ws.isWebLost)
+		{	if(ws.loginStatus==1)
 			{	loginButton.setEnabled(false);
 	//			accountSelectCombo.setEditable(false);
 			}
@@ -177,7 +178,7 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		}
 		
 		//自动登录的检查,如果登出了,自动发送登录信息
-		if(!ReadStatus.WebLost&&autoLoginChBox.isSelected()&&ReadStatus.loginStatus==0)
+		if(!ws.isWebLost&&autoLoginChBox.isSelected()&&ws.loginStatus==0)
 		{
 			String defaultAccount = null;
 			try {
@@ -203,10 +204,10 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		//自动登录的功能记录
 		if(autoLoginChBox.isSelected())
 		{	autoLogin=true;//这是为了让flowdisplay的按钮不可用	,传递全局信息		
-			if(ReadStatus.loginStatus==1)
+			if(ws.loginStatus==1)
 				try {
 					if(FlowAppMainFrame.autologin<=0)
-					{	new ConfigAutoLogin().write2Name(ReadStatus.userName);
+					{	new ConfigAutoLogin().write2Name(ws.userName);
 						FlowAppMainFrame.autologin=2;
 					}
 				} catch (IOException e1) {

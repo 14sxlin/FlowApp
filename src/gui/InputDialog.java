@@ -1,4 +1,4 @@
-package lin.gui;
+package gui;
 
 import java.awt.Dialog;
 import java.awt.GridLayout;
@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import lin.readwrite.AccountManager;
+import readwrite.AccountManager;
 
 
 @SuppressWarnings("serial")

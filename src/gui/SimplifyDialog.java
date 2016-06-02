@@ -1,4 +1,4 @@
-package lin.gui;
+package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
-import lin.readwrite.ReadStatus;
+import readwrite.WebStatus;
 
 @SuppressWarnings("serial")
 public class SimplifyDialog extends JDialog implements WindowListener,ActionListener {
@@ -25,7 +25,9 @@ public class SimplifyDialog extends JDialog implements WindowListener,ActionList
 	private GridBagLayout gridbag;
 	private GridBagConstraints constraints;
 	private JPanel jPanel;
-	public SimplifyDialog(boolean inCheck,Timer timer) {
+	private WebStatus ws;
+	public SimplifyDialog( WebStatus ws,boolean inCheck,Timer timer) {
+		this.ws = ws;
 		jPanel=new JPanel();
     	jPanel.setBorder(new TitledBorder("流量"));
     	gridbag=new GridBagLayout();
@@ -63,15 +65,15 @@ public class SimplifyDialog extends JDialog implements WindowListener,ActionList
     	statusLabel.setForeground(Color.red);
     	jPanel.add(statusLabel, constraints);
     	
-    	if(ReadStatus.loginStatus==1)
-    		this.setTitle(ReadStatus.userName);
+    	if(ws.loginStatus==1)
+    		this.setTitle(ws.userName);
     	this.setSize(120, 120);
     	Dimension d=getToolkit().getScreenSize();
     	this.setLocation(d.width-150,0);
     	this.add(jPanel);
     	this.setAlwaysOnTop(true);
     	
-    	this.setLoginStatus(ReadStatus.loginStatus, ReadStatus.useOut);
+    	this.setLoginStatus();
     	
     	if(inCheck)
     		this.addWindowListener(this);
@@ -79,14 +81,14 @@ public class SimplifyDialog extends JDialog implements WindowListener,ActionList
     	this.setVisible(true);
 	}
 	
-	public void setLoginStatus(int loginstatus,boolean useOut)
+	public void setLoginStatus()
     {
-			if(!ReadStatus.WebLost)
-	    	{	if(loginstatus==1)
+			if(!ws.isWebLost)
+	    	{	if(ws.loginStatus==1)
 	    		{	statusLabel.setForeground(Color.green);
 	    		statusLabel.setText("已登录");
 	    		}
-	    		else if(loginstatus==0)
+	    		else if(ws.loginStatus==0)
 	    		{
 	    			statusLabel.setForeground(Color.red);
 	    			statusLabel.setText("未登录");
@@ -94,7 +96,7 @@ public class SimplifyDialog extends JDialog implements WindowListener,ActionList
 	    			statusLabel.setForeground(Color.blue);
 	    		statusLabel.setText("用户名或密码错误");
 	    	}
-	    	if(useOut)
+	    	if(ws.useOut)
 	    	{
 	    		statusLabel.setForeground(Color.blue);
 	    		statusLabel.setText("流量已用完");
@@ -105,25 +107,21 @@ public class SimplifyDialog extends JDialog implements WindowListener,ActionList
 			}
     }
 
-	public void setTexts(String name,String used,String remain,int status)
-    {	if(!ReadStatus.WebLost)
-    	{	this.setTitle(name);
-	    	this.usedText.setText(ReadStatus.subNum(used));
-	    	this.remainText.setText(ReadStatus.subNum(remain));
-	    	this.setLoginStatus(status,ReadStatus.useOut);
+	public void setTexts()
+    {	if(!ws.isWebLost)
+    	{	this.setTitle(ws.userName);
+	    	this.usedText.setText(""+ws.usedAmount);
+	    	this.remainText.setText(""+ws.remainAmount);
+	    	this.setLoginStatus();
     	}else
     	{
-    		this.setTitle(name);
+    		this.setTitle(ws.userName);
 	    	this.usedText.setText("");
 	    	this.remainText.setText("");
-	    	this.setLoginStatus(status,ReadStatus.useOut);
+	    	this.setLoginStatus();
     	}
     }
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		new SimplifyDialog(false,null);
-	}
 
 	public void windowActivated(WindowEvent arg0) {
 		// TODO Auto-generated method stub

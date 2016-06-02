@@ -1,4 +1,4 @@
-package lin.tool;
+package tool;
 
 import java.awt.GridLayout;
 import java.awt.Color;
@@ -16,7 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
-import lin.gui.ButtonAreaPanel;
+import gui.ButtonAreaPanel;
 import sun.audio.*;
 public class PlayMusic implements ActionListener, WindowListener {
 

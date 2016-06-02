@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
-import lin.readwrite.ResourcePath;
+import readwrite.ResourcePath;
 @Deprecated
 public class ReadAccount implements ResourcePath{
 	

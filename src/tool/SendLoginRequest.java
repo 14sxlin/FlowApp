@@ -1,4 +1,4 @@
-package lin.tool;
+package tool;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -9,7 +9,7 @@ import java.net.URL;
 
 import javax.swing.JOptionPane;
 
-import lin.readwrite.ResourcePath;
+import readwrite.ResourcePath;
 
 public class SendLoginRequest {
 	private HttpURLConnection con;

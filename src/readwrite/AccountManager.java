@@ -1,4 +1,4 @@
-package lin.readwrite;
+package readwrite;
 
 import java.io.BufferedReader;
 import java.io.File;

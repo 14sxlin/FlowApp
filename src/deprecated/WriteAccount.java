@@ -9,7 +9,7 @@ import java.net.URLDecoder;
 
 import javax.swing.JOptionPane;
 
-import lin.readwrite.ResourcePath;
+import readwrite.ResourcePath;
 @Deprecated
 public class WriteAccount implements ResourcePath{
 	public  PrintWriter out;

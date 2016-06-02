@@ -7,7 +7,7 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 
-import lin.readwrite.AccountManager;
+import readwrite.AccountManager;
 
 public class AccountManagerTest {
 

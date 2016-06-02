@@ -1,11 +1,11 @@
-package lin.gui;
+package gui;
 
 import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import lin.readwrite.AccountManager;
+import readwrite.AccountManager;
 
 @SuppressWarnings("serial")
 public class DropDialog extends SelectDialog {

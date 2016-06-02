@@ -1,4 +1,4 @@
-package lin.gui;
+package gui;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -18,10 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-//import lin.component.MusicChooser;
-import lin.readwrite.MusicList;
-import lin.readwrite.ResourcePath;
-import lin.tool.PlayMusic;
+import readwrite.MusicList;
+import readwrite.ResourcePath;
+import tool.PlayMusic;
 
 @SuppressWarnings("serial")
 public class AlarmSettingDialog extends JDialog implements ActionListener {
@@ -38,7 +37,7 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 	private PlayMusic music;
 	public static String musicPath;
 	public static int alarmAmount;
-	public AlarmSettingDialog(String maxFlow) throws UnsupportedEncodingException {
+	public AlarmSettingDialog(int maxFlow) throws UnsupportedEncodingException {
 		// TODO Auto-generated constructor stub
 		//界面设计
 		this.setTitle("设置提醒");
@@ -46,7 +45,7 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 		this.setBounds(450, 250, 200, 200);
 		this.setAlwaysOnTop(true);
 		this.setLayout(new GridLayout(4, 1));
-		this.maxFlow=Integer.parseInt(maxFlow);
+		this.maxFlow=maxFlow;
 //		musicChooser=new MusicChooser();		
 		model=new SpinnerNumberModel((this.maxFlow-100)/100*100, 0, this.maxFlow, 50);
 		alarmSpin=new JSpinner(model);

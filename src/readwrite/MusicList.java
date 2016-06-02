@@ -1,4 +1,4 @@
-package lin.readwrite;
+package readwrite;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -6,7 +6,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import lin.tool.WavFileFilter;
+import tool.WavFileFilter;
 
 public class MusicList implements ResourcePath {
 	public HashMap< String, File> hashMap;

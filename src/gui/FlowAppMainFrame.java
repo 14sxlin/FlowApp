@@ -1,4 +1,4 @@
-package lin.gui;
+package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,11 +16,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 
-import lin.readwrite.AccountManager;
-import lin.readwrite.ConfigAutoLogin;
-import lin.readwrite.ConfigAutoSelect;
-import lin.readwrite.ReadStatus;
-import lin.readwrite.ResourcePath;
+import readwrite.AccountManager;
+import readwrite.ConfigAutoLogin;
+import readwrite.ConfigAutoSelect;
+import readwrite.ResourcePath;
+import readwrite.WebStatus;
 
 @SuppressWarnings("serial")
 public class FlowAppMainFrame extends JFrame implements ActionListener, ItemListener, WindowListener{
@@ -43,8 +43,15 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	public static boolean autoSelect;
 	public static boolean inside=false;//内部的组件
 	public static AccountManager am;
+	public static WebStatus ws;
 	public FlowAppMainFrame() {
 		am = new AccountManager(ResourcePath.JARPATH,"account.txt");
+		try {
+			ws = new WebStatus(ResourcePath.SERVERPATH);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//GUI界面
 		this.setTitle("流量");
 		this.setBounds(400, 200, 200, 330);
@@ -76,12 +83,12 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		chekboxItem[0].setSelected(true);
 		
 		//流量展示区域
-		displayPanel=new FlowDisplayPanel(true, am);
+		displayPanel=new FlowDisplayPanel(true, am,ws);
 		split=new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		split.add(displayPanel);
 		split.setOneTouchExpandable(true);
 		//下面的按钮区域
-		buttonPanel=new ButtonAreaPanel(this, am);
+		buttonPanel=new ButtonAreaPanel(this, am,ws);
 		split.add(buttonPanel);	
 		this.add(split);
 		
@@ -210,7 +217,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		
 		//显示精简面板
 		if(chekboxItem[1].isSelected()&&simplifyDialog==null)
-				simplifyDialog=new SimplifyDialog(true,displayPanel.timer);
+				simplifyDialog=new SimplifyDialog(ws,true,displayPanel.timer);
 		if(!chekboxItem[1].isSelected()&&simplifyDialog!=null)
 			{	simplifyDialog.dispose();
 				simplifyDialog=null;
@@ -232,7 +239,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		//没有设置默认账号的时候登录的账号
 		try {
 			if(autologin<=0)
-			{	new ConfigAutoLogin().write_1Name(ReadStatus.userName);}
+			{	new ConfigAutoLogin().write_1Name(ws.userName);}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

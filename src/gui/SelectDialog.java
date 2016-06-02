@@ -1,4 +1,4 @@
-package lin.gui;
+package gui;
 
 import java.awt.LayoutManager;
 
@@ -8,7 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import lin.readwrite.AccountManager;
+import readwrite.AccountManager;
 
 @SuppressWarnings("serial")
 public abstract class SelectDialog extends JDialog {
