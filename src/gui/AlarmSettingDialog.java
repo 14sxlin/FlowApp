@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 //import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,7 +21,7 @@ import javax.swing.SpinnerNumberModel;
 
 import readwrite.MusicList;
 import readwrite.ResourcePath;
-import tool.PlayMusic;
+import tool.MusicPlayer;
 
 @SuppressWarnings("serial")
 public class AlarmSettingDialog extends JDialog implements ActionListener {
@@ -34,11 +35,12 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 	private int maxFlow=800;//记录最大的流量,默认800M
 	public File musicFile;
 	private MusicList musicList;
-	private PlayMusic music;
+	private MusicPlayer music;
 	public static String musicPath;
 	public static int alarmAmount;
-	public AlarmSettingDialog(int maxFlow) throws UnsupportedEncodingException {
-		// TODO Auto-generated constructor stub
+	private JFrame parent;
+	public AlarmSettingDialog(JFrame parent,int maxFlow) throws UnsupportedEncodingException {
+		this.parent = parent;
 		//界面设计
 		this.setTitle("设置提醒");
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
@@ -60,7 +62,7 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 		JPanel panel=new JPanel();
 		musicList=new MusicList(ResourcePath.JARPATH);
 		if(musicList.strMusicList.length==0)
-		{	JOptionPane.showMessageDialog(this, "当前文件夹没有(.wav)音乐文件");
+		{	JOptionPane.showMessageDialog(parent, "当前文件夹没有(.wav)音乐文件");
 			this.dispose();
 		}	
 		else
@@ -102,13 +104,13 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 			String name=(String) alarmCombo.getSelectedItem();
 			if(name!=null)
 			{	try {
-				music=new PlayMusic(musicList.hashMap.get(name),true);
+				music=new MusicPlayer(musicList.hashMap.get(name),true);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 				music.play();
-				music.showControlPanel(this, "请按停止关闭音乐");
+				music.showControlPanel(parent, "请按停止关闭音乐");
 			}
 		}
 		if(e.getActionCommand().equals("确定"))

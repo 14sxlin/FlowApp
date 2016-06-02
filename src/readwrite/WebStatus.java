@@ -11,7 +11,6 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 public class WebStatus implements ActionListener {
@@ -64,11 +63,9 @@ public class WebStatus implements ActionListener {
 			while ((line = br.readLine()) != null) {
 				htmldata.append(line);
 			}
-			System.out.println(htmldata);
 			br.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "已断网~请好好休息,晚安");
 			isWebLost=true;
 			setNull();
 		}		
@@ -104,40 +101,6 @@ public class WebStatus implements ActionListener {
 		totalAmount=0;
 		remainAmount=0;
 	}	
-
-	/*
-	public BufferedReader openStream(String pathname) throws IOException
-	{
-		BufferedReader br=null;
-		try {
-			URL url=new URL(pathname);
-			URLConnection con=url.openConnection();
-			con.setConnectTimeout(1000);
-			InputStream in=con.getInputStream();
-			br=new BufferedReader(new InputStreamReader(in));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "已断网~请好好休息,晚安");
-//			timer.stop();
-			isWebLost=true;
-			setNull();
-		}		
-		return br;
-		
-	}
-	
-	public StringBuilder getStringBuilder(BufferedReader br) throws IOException
-	{
-		if (!isWebLost) {
-			String line;
-			StringBuilder b = new StringBuilder();
-			while ((line = br.readLine()) != null) {
-				b.append(line);
-			}
-			br.close();
-			return b;
-		}else return new StringBuilder("");
-	}*/
 	
 	/**
 	 * 通过正则表达式获取某个标签内的数据
@@ -310,19 +273,8 @@ public class WebStatus implements ActionListener {
 		}
 	}
 
-	@Deprecated
 	public void setWebLost()
 	{
-//		long time=System.currentTimeMillis();
-//		SimpleDateFormat str=new SimpleDateFormat("hh:mm:ss");
-//System.out.println("down is: "+str.format(new Date(0-8*60*60*1000)));
-//System.out.println(1440609223319l/60/60/1000/24/365);
-//System.out.println(6*60*60*1000+30*60*1000);
-//System.out.println("now is:  "+str.format(new Date(time)));
-//System.out.println("up is  :  "+str.format(new Date(0-8*60*60*1000+6*60*60*1000+30*60*1000)));
-//		if(time>=(0-8*60*60*1000)&&time<=6*60*60*1000+30*60*1000)
-//			WebLost=true;
-//		else WebLost=false;
 		isWebLost=false;
 	}
 	
@@ -330,8 +282,7 @@ public class WebStatus implements ActionListener {
 		try {
 				loadAllStatus();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "网页打不开啊..隔壁老王\n"+this.getClass().getName());
+			e1.printStackTrace();
 		}
 	}
 }

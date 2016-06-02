@@ -1,8 +1,8 @@
 package tool;
 
-import java.awt.GridLayout;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -14,27 +14,29 @@ import java.io.InputStream;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import gui.ButtonAreaPanel;
-import sun.audio.*;
-public class PlayMusic implements ActionListener, WindowListener {
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
+public class MusicPlayer implements ActionListener, WindowListener {
 
-	public AudioStream as;	
-	public InputStream in;
+	private AudioStream as;	
+	private InputStream in;
 	private JDialog controlPanel;
 	private boolean asCompenont;
-	public PlayMusic(File f,boolean asCompenont) throws IOException {
+	public MusicPlayer(File f,boolean asCompenont) throws IOException {
 		// TODO Auto-generated constructor stub
 		this.asCompenont=asCompenont;
 		in=new FileInputStream(f);
 		as=new AudioStream(in);
 	}
-	public PlayMusic(InputStream musicStream) throws IOException {
+	public MusicPlayer(InputStream musicStream) throws IOException {
 		// TODO Auto-generated constructor stub
 		as=new AudioStream(musicStream);
 	}
-	public PlayMusic(String musicPath,boolean asCompenont)
+	public MusicPlayer(String musicPath,boolean asCompenont)
 	{
 		this.asCompenont=asCompenont;
 		try {
@@ -54,12 +56,12 @@ public class PlayMusic implements ActionListener, WindowListener {
 		AudioPlayer.player.stop(as);
 		as.close();
 	}
-	public void showControlPanel(JDialog dialog,String message)
+	public void showControlPanel(JFrame parent,String message)
 	{
 		controlPanel=new JDialog();
 		controlPanel.setAlwaysOnTop(true);
 		controlPanel.setModalityType(ModalityType.TOOLKIT_MODAL);
-		controlPanel.setLocationRelativeTo(dialog);
+		controlPanel.setLocationRelativeTo(parent);
 		controlPanel.setLayout(new GridLayout(2, 1));
 		JLabel temp=new JLabel(message);
 		temp.setForeground(Color.red);

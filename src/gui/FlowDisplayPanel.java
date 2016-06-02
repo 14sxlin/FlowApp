@@ -17,10 +17,9 @@ import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
 import readwrite.AccountManager;
-import readwrite.ConfigAutoLogin;
 import readwrite.ResourcePath;
 import readwrite.WebStatus;
-import tool.SendLoginRequest;
+import tool.RequestSender;
 
 @SuppressWarnings("serial")
 public class FlowDisplayPanel extends JPanel implements ActionListener {
@@ -64,7 +63,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
     	this.add(usedText, constraints);    	
     	constraints=new GridBagConstraints(2, 2, 1, 1, 1, 1,GridBagConstraints.CENTER
 				, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 5);
-    	this.add(new JLabel("Byte"),constraints);
+    	this.add(new JLabel("M"),constraints);
     	
     	constraints=new GridBagConstraints(0, 1, 1, 1, 1, 1,GridBagConstraints.CENTER
 				, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 5);
@@ -77,7 +76,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
     	this.add(totalText, constraints);    	
     	constraints=new GridBagConstraints(2, 1, 1, 1, 1, 1,GridBagConstraints.CENTER
 				, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 5, 5);
-    	this.add(new JLabel("Byte"),constraints);
+    	this.add(new JLabel("M"),constraints);
     	
     	constraints=new GridBagConstraints(0, 3, 1, 1, 1, 1,GridBagConstraints.CENTER
 				, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
@@ -92,7 +91,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
     	
     	constraints=new GridBagConstraints(2, 3, 1, 1, 1, 1,GridBagConstraints.CENTER
 				, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
-    	this.add(new JLabel("Byte"),constraints);
+    	this.add(new JLabel("M"),constraints);
     	
     	constraints=new GridBagConstraints(0, 4, 3, 1, GridBagConstraints.REMAINDER
     			, 1,GridBagConstraints.CENTER
@@ -161,11 +160,12 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 				statusLabel.setText("流量已用完");
 				logoutButton.setEnabled(false);
 			}
-			if(ButtonAreaPanel.autoLogin)
+			if(FlowAppMainFrame.autoLogin)
 			{	logoutButton.setEnabled(false);
 			}
-			else {	logoutButton.setEnabled(true);
-						ButtonAreaPanel.autoLogin=false;
+			else {
+				logoutButton.setEnabled(true);
+				FlowAppMainFrame.autoLogin=false;
 			}
 		}
 		else {
@@ -190,7 +190,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 			//如果是登录着,发送退出的信息
 			if(ws.loginStatus==1)
 				try {
-					new SendLoginRequest().logout(ResourcePath.SERVERPATH);
+					new RequestSender().logout(ResourcePath.SERVERPATH);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -200,7 +200,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 			{
 				String key=am.usernameList.get(time);
 				try {
-					new SendLoginRequest().login(ResourcePath.SERVERPATH, 
+					new RequestSender().login(ResourcePath.SERVERPATH, 
 							am.accountMap.get(key));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -231,11 +231,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 		this.setTexts();
 		if(e.getSource()==logoutButton)
 			try {
-				if(FlowAppMainFrame.autologin!=1&&FlowAppMainFrame.autologin!=2)
-				{	new ConfigAutoLogin().write_1Name(ws.userName);
-					FlowAppMainFrame.autologin=-1;
-				}
-				new SendLoginRequest().logout(ResourcePath.SERVERPATH);					
+				new RequestSender().logout(ResourcePath.SERVERPATH);					
 				this.setTexts();
 				ButtonAreaPanel.loginButton.setEnabled(true);			
 			} catch (IOException e1) {

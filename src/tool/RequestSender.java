@@ -7,15 +7,13 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-import javax.swing.JOptionPane;
 
-import readwrite.ResourcePath;
 
-public class SendLoginRequest {
+public class RequestSender {
 	private HttpURLConnection con;
 	private OutputStreamWriter out;
 	URL url;
-	public SendLoginRequest() throws IOException {}
+	public RequestSender() throws IOException {}
 	
 	public void login(String serverpath,String params) throws IOException
 	{
@@ -23,7 +21,7 @@ public class SendLoginRequest {
 			url=new URL(serverpath);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "服务器哪里捡的山塞货?完全找不到\n"+this.getClass().getName());
+			e.printStackTrace();
 		}
 		try {
 			con=(HttpURLConnection) url.openConnection();
@@ -42,7 +40,7 @@ public class SendLoginRequest {
 //System.out.println(con.getResponseCode());//就算是断开连接了也能得到什么,而且两次的结果是一样的
 		} catch (SocketTimeoutException e) {
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "已断网");
+			e.printStackTrace();
 		}
 
 
@@ -55,7 +53,7 @@ public class SendLoginRequest {
 			url=new URL(serverpath);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "服务器哪里捡的山塞货?完全找不到\n"+this.getClass().getName());
+			e.printStackTrace();
 		}	
 		try {
 			con=(HttpURLConnection) url.openConnection();
@@ -74,15 +72,7 @@ public class SendLoginRequest {
 			con.disconnect();
 		} catch (SocketTimeoutException e) {
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "已断网");
+			e.printStackTrace();
 		}
 	}
-//	public static void main(String[] args) throws IOException {
-//		// TODO Auto-generated method stub
-//		SendLoginRequest a=new SendLoginRequest();
-//		a.login(ResourcePath.SERVERPATH,"AuthenticateUser=14sxlin&AuthenticatePassword=pw146348");
-////		a.logout(ResourcePath.SERVERPATH);
-//		//如果读在写之前可能也会报connection reset的错误
-//	}
-
 }
