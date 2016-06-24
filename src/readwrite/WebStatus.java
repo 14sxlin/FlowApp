@@ -102,40 +102,56 @@ public class WebStatus implements ActionListener {
 		remainAmount=0;
 	}	
 	
-	/**
-	 * 通过正则表达式获取某个标签内的数据
-	 * @param input
-	 * @param pattern
-	 * @return
-	 */
-	private  String cutNumberByMacther(String pattern)
-	{
-		String temp1 = null;
-		try {//这在点击退出的时候回触发这个错误
-			String temp = null;
-			Pattern p=Pattern.compile(pattern);
-			Matcher m=p.matcher(htmldata);
-			while(m.find())
-			{
-				temp=htmldata.substring(m.start(), m.end());
-			}
-			p=Pattern.compile("\\d{0,3},?\\d{1,3},\\d{1,3}");
-			m=p.matcher(temp);
-			temp1 = "没有找到内容";
-			while(m.find())
-			{
-				temp1=temp.substring(m.start(), m.end());
-			}
-		} catch (NullPointerException e) {
-//			timer.stop();
-			setNull();
-		}
-//System.out.println("temp1="+temp1);
-		if(temp1.length()<=7)
-			return "0,"+temp1;
-		else return temp1;
-	}
+//	/**
+//	 * 通过正则表达式获取某个标签内的数据
+//	 * @param input
+//	 * @param pattern
+//	 * @return 匹配的值
+//	 */
+//	@Deprecated
+//	private  String cutNumberByMacther(String pattern)
+//	{
+//		String temp1 = null;
+//		try {//这在点击退出的时候回触发这个错误
+//			String temp = null;
+//			Pattern p=Pattern.compile(pattern);
+//			Matcher m=p.matcher(htmldata);
+//			while(m.find())
+//			{
+//				temp=htmldata.substring(m.start(), m.end());
+//			}
+//			p=Pattern.compile("\\d{0,3},?\\d{1,3},\\d{1,3}");
+//			m=p.matcher(temp);
+//			temp1 = "没有找到内容";
+//			while(m.find())
+//			{
+//				temp1=temp.substring(m.start(), m.end());
+//			}
+//		} catch (NullPointerException e) {
+////			timer.stop();
+//			setNull();
+//		}
+////System.out.println("temp1="+temp1);
+//		if(temp1.length()<=7)
+//			return "0,"+temp1;
+//		else return temp1;
+//	}
 	
+	/**
+	 * 通过标签来定位,获取标签内部的值
+	 * @return 返回标签内的内容
+	 */
+	private String cutNumberByLabel(String left,String right)
+	{
+		int first = htmldata.indexOf(left)+left.length();
+		if(first==-1) return "0";
+		int end = htmldata.indexOf(right, first);
+		if(end!=-1)
+		{
+			return htmldata.substring(first,end);
+		}
+		else return "0";
+	}
 	/**
 	 * 获取网页中的用户名
 	 * 内建了pattern 
@@ -173,7 +189,8 @@ public class WebStatus implements ActionListener {
 	 */
 	private  int loadTotalAmount()
 	{
-		String rslt = cutNumberByMacther("<td class=\\\"text3\\\" id=\\\"tb\\\">.+?</td>");
+//		String rslt = cutNumberByMacther("<td class=\\\"text3\\\" id=\\\"tb\\\">.+?</td>");
+		String rslt = cutNumberByLabel("<td class=\"text3\" id=\"tb\">", "<");
 		return formatFlowData(rslt);
 	}
 	
@@ -184,7 +201,8 @@ public class WebStatus implements ActionListener {
 	 */
 	private  int loadUsedAmount()
 	{
-		String rslt = cutNumberByMacther("<td class=\\\"text3\\\" id=\\\"ub\\\">.+?</td>");		
+//		String rslt = cutNumberByMacther("<td class=\\\"text3\\\" id=\\\"ub\\\">.+?</td>");		
+		String rslt = cutNumberByLabel("<td class=\"text3\" id=\"ub\">", "<");
 		return formatFlowData(rslt);
 	}
 
