@@ -42,6 +42,15 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	public static WebStatus ws;
 	public FlowAppMainFrame() {
 		Configure.setFilePath(ResourcePath.CONFIGPATH);
+		// TODO System Output Test Block
+		System.out.println(ResourcePath.CONFIGPATH);
+		try {
+			Configure.GetAllProperties();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		am = new AccountManager(ResourcePath.JARPATH,"account.txt");
 		try {
 			ws = new WebStatus(ResourcePath.SERVERPATH);
@@ -117,19 +126,27 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	//获取自动登录的状态
 	public  void getAutoLogin()
 	{
+		System.out.println(Configure.GetValueByKey("autoLogin"));
 		autoLogin = Configure.GetValueByKey("autoLogin").equals("true")?true:false;
 		if(autoLogin)
-		{	buttonPanel.autoLoginChBox.setSelected(true);
+		{	
+			buttonPanel.autoLoginChBox.setSelected(true);
 		}	
 	}
 
 	//获取自动切换状态
 	public void getAutoSelect()
 	{
-		autoSelect=Configure.GetValueByKey("autoSelect").equals("true")?true:false;
-		if(autoSelect)
-			buttonPanel.autoSelectChBox.setSelected(true);
-		else buttonPanel.autoSelectChBox.setSelected(false);
+		try {
+			autoSelect = Configure.GetValueByKey("autoSelect").equals("true")?true:false;
+			if(autoSelect)
+				buttonPanel.autoSelectChBox.setSelected(true);
+			else buttonPanel.autoSelectChBox.setSelected(false);
+		} catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Configure.createDefaultFile();
+		}
 
 	}
  

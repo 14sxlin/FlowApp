@@ -196,7 +196,8 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 			//自动登录的功能记录
 			if(autoLoginChBox.isSelected())
 			{	FlowAppMainFrame.autoLogin=true;//这是为了让flowdisplay的按钮不可用	,传递全局信息		
-				Configure.WriteProperties("lastLogin", ws.userName);
+				if(ws.userName!=null)
+					Configure.WriteProperties("lastLogin", ws.userName);
 				Configure.WriteProperties("autoLogin", "true");
 				
 				//写入是否自动切换的资料 不要在这里记录文件,因为初始化的时候会先有未选中的状态
