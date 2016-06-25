@@ -21,7 +21,7 @@ import javax.swing.SpinnerNumberModel;
 
 import readwrite.MusicList;
 import readwrite.ResourcePath;
-import tool.MusicPlayer;
+import tool.MusicPlayerWithDialog;
 
 @SuppressWarnings("serial")
 public class AlarmSettingDialog extends JDialog implements ActionListener {
@@ -31,12 +31,12 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 	public JButton sureButton;
 	private JButton cancelButton;
 	private SpinnerNumberModel model;
-//	private MusicChooser musicChooser;
 	private int maxFlow=800;//记录最大的流量,默认800M
 	public File musicFile;
 	private MusicList musicList;
-	private MusicPlayer music;
-	public static String musicPath;
+	private MusicPlayerWithDialog music;
+	public static int indexOfMusic;
+	public static String musicName;
 	public static int alarmAmount;
 	private JFrame parent;
 	public AlarmSettingDialog(JFrame parent,int maxFlow) throws UnsupportedEncodingException {
@@ -102,9 +102,17 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 		if(e.getActionCommand().equals("试听"))
 		{
 			String name=(String) alarmCombo.getSelectedItem();
+			int index = alarmCombo.getSelectedIndex();
 			if(name!=null)
 			{	try {
-				music=new MusicPlayer(musicList.hashMap.get(name),true);
+				if(index>=0&&index<=8)
+				{
+					music = new MusicPlayerWithDialog(getClass().getResourceAsStream("/sounds/"+name)
+							,true,ButtonAreaPanel.alarmhasSet);
+				}
+				else {
+					music=new MusicPlayerWithDialog(new File(musicList.fileMap.get(name)),true,ButtonAreaPanel.alarmhasSet);
+				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -115,10 +123,18 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 		}
 		if(e.getActionCommand().equals("确定"))
 		{
-			musicPath=(String) alarmCombo.getSelectedItem();
-//System.out.println(musicIndex);
-			try{	alarmAmount=(Integer) alarmSpin.getValue();}
-			catch(NumberFormatException ex) { JOptionPane.showMessageDialog(this, "输入错误");		};
+			indexOfMusic = alarmCombo.getSelectedIndex();
+			if(indexOfMusic>=0&&indexOfMusic<=8)
+				musicName=(String) alarmCombo.getSelectedItem();
+			else musicName = musicList.fileMap.get((String) alarmCombo.getSelectedItem());
+			
+			try{	
+				alarmAmount=(Integer) alarmSpin.getValue();
+			}
+			catch(NumberFormatException ex) 
+			{ 
+				JOptionPane.showMessageDialog(this, "输入错误");	
+			};
 			this.dispose();
 			ButtonAreaPanel.alarmhasSet=true;
 		}	

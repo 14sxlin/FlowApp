@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -21,7 +22,7 @@ import readwrite.AccountManager;
 import readwrite.Configure;
 import readwrite.ResourcePath;
 import readwrite.WebStatus;
-import tool.MusicPlayer;
+import tool.MusicPlayerWithDialog;
 import tool.MyLogger;
 import tool.RequestSender;
 
@@ -39,7 +40,7 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 	public static boolean alarmhasSet=false;
 	public String params;
 	public Timer timer;
-	public MusicPlayer music;
+	public MusicPlayerWithDialog music;
 	public SetDefaultLoginAccount setDefaultLoginAccount;
 	private AccountManager am;
 	//记录是不是初始化的时候的激发的自动选择
@@ -134,14 +135,26 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		if(!ws.isWebLost&&(alarmhasSet)&&
 				ws.usedAmount>=AlarmSettingDialog.alarmAmount)
 		{
-			music=new MusicPlayer(AlarmSettingDialog.musicPath,true);
+			try {
+				if(AlarmSettingDialog.indexOfMusic>=0&&AlarmSettingDialog.indexOfMusic<=8)
+				{
+					music = new MusicPlayerWithDialog(getClass().getResourceAsStream("/sounds/"+AlarmSettingDialog.musicName)
+							,true,ButtonAreaPanel.alarmhasSet);
+				}
+				else {
+					music=new MusicPlayerWithDialog(new File(AlarmSettingDialog.musicName),true,ButtonAreaPanel.alarmhasSet);
+				}
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			music.play();
 			music.showControlPanel(parent, "流量警告");
 		}
 		
 		
 		//设置提醒,设置之后会变成取消提醒字样
-		if(action.equals("设置提醒"))//这里如果用getAccom..会报错 为毛啊?因为时间器执行的时候没有激发事件
+		if(action.equals("设置提醒"))
 		{	FlowAppMainFrame.inside=true;
 			try {
 				new AlarmSettingDialog(parent, ws.totalAmount);

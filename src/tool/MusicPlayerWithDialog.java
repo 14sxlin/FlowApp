@@ -20,27 +20,40 @@ import javax.swing.JLabel;
 import gui.ButtonAreaPanel;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
-public class MusicPlayer implements ActionListener, WindowListener {
+public class MusicPlayerWithDialog implements ActionListener, WindowListener {
 
 	private AudioStream as;	
-	private InputStream in;
 	private JDialog controlPanel;
 	private boolean asCompenont;
-	public MusicPlayer(File f,boolean asCompenont) throws IOException {
-		// TODO Auto-generated constructor stub
+	private boolean state;
+	
+	/**
+	 * 
+	 * @param musicStream 读进来的wav音乐文件流
+	 * @param asCompenont 是否作为组件,如果是组件的话,会改变状态
+	 * @param state 传进来的初始状态,播放结束后会更改状态
+	 * @throws IOException
+	 */
+	public MusicPlayerWithDialog(InputStream musicStream,boolean asCompenont,boolean state) throws IOException {
 		this.asCompenont=asCompenont;
-		in=new FileInputStream(f);
-		as=new AudioStream(in);
-	}
-	public MusicPlayer(InputStream musicStream) throws IOException {
-		// TODO Auto-generated constructor stub
+		this.state = state;
 		as=new AudioStream(musicStream);
 	}
-	public MusicPlayer(String musicPath,boolean asCompenont)
+	
+	/**
+	 * 
+	 * @param f wav文件
+	 * @param asCompenont 是否作为组件,如果是组件的话,会改变状态
+	 * @param state 传进来的初始状态,播放结束后会更改状态
+	 * @throws IOException
+	 */
+	public MusicPlayerWithDialog(File f,boolean asCompenont,boolean state) throws IOException {
+		this(new FileInputStream(f),asCompenont,state);
+	}
+	public MusicPlayerWithDialog(String musicDirectory)
 	{
-		this.asCompenont=asCompenont;
 		try {
-			InputStream in=this.getClass().getClassLoader().getResourceAsStream(musicPath);
+			InputStream in=this.getClass().getClassLoader().getResourceAsStream(musicDirectory);
 			as=new AudioStream(in);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -101,7 +114,9 @@ public class MusicPlayer implements ActionListener, WindowListener {
 		// TODO Auto-generated method stub
 		try {
 			if(asCompenont)
-				ButtonAreaPanel.alarmhasSet=false;
+			{
+				state = !state;
+			}
 			this.close();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
