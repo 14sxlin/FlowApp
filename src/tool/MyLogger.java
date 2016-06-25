@@ -17,7 +17,15 @@ public abstract class MyLogger {
 	public static void info(String message) {
 		logger.info(message);
 	}
+	public static void info(Class<?> myclass,String message) {
+		setLogger(myclass);
+		logger.info(message);
+	}
 	
+	public static void warn(Class<?> myclass,String message) {
+		setLogger(myclass);
+		logger.warn(message);
+	}
 	public static void warn(String message) {
 		logger.warn(message);
 	}

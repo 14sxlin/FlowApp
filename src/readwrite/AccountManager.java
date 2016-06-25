@@ -13,6 +13,9 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import base64.Base64Coder;
+import tool.MyLogger;
+
 
 /**
  * 
@@ -69,13 +72,14 @@ public class AccountManager {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
 			String line;
 			while ((line = br.readLine()) != null) {
-				accountMap.put(this.getAccountName(line).trim(), line.trim());
-				usernameList.add(this.getAccountName(line).trim());
+				String parser = Base64Coder.decode(line.trim());
+				accountMap.put(this.getAccountName(parser), parser);
+				usernameList.add(this.getAccountName(parser).trim());
 			}
 			br.close();
 			generateArray(usernameList);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			MyLogger.fatal(getClass(), e.getMessage()+" 读取用户信息失败");
 			e.printStackTrace();
 		}
 	}
@@ -164,7 +168,7 @@ public class AccountManager {
 			File f=new File(jarPath);//这句话并不会新建文件
 			OutputStream in=new FileOutputStream(f,true);//让文件可以追加内容,而且这句话这里自动新建了一个
 			out=new PrintWriter(in);
-			out.append(params+"\r\n");
+			out.append(Base64Coder.encode(params)+"\r\n");
 			out.close();
 			generateArray(usernameList);
 		} catch (Exception e) {

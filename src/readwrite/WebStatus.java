@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 import javax.swing.Timer;
 
+import tool.MyLogger;
+
 public class WebStatus implements ActionListener {
 	/*
 	 * 1.记得退出的时候把时间关掉
@@ -38,7 +40,8 @@ public class WebStatus implements ActionListener {
 			timer=new Timer(1000, this);
 			timer.start();		
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			MyLogger.setLogger(getClass());
+			MyLogger.warn(e.getMessage());
 			e.printStackTrace();
 			loginStatus=OUT;
 			setNull();
@@ -65,7 +68,7 @@ public class WebStatus implements ActionListener {
 			}
 			br.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			MyLogger.info(e.getMessage()+" 断网了");
 			isWebLost=true;
 			setNull();
 		}		
@@ -239,7 +242,7 @@ public class WebStatus implements ActionListener {
 			}
 			return reslt/1000000;
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
+			MyLogger.fatal(getClass(),e.getMessage()+" 数据转换出错,输入有问题");
 			e.printStackTrace();
 		}return -1;
 		
@@ -285,7 +288,7 @@ public class WebStatus implements ActionListener {
 						loginStatus=ERROR;
 					else 	loginStatus=IN;
 			} catch (NullPointerException e) {
-				// TODO Auto-generated catch block
+//				MyLogger.fatal(getClass(),e.getMessage()+" 找不到用户名或密码错误的相关信息");
 				loginStatus=IN;
 			}
 		}

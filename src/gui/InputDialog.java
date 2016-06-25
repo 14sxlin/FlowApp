@@ -65,6 +65,7 @@ public abstract class InputDialog extends JDialog {
 		this.add(panel0);
 		this.setVisible(true);
 		this.setResizable(false);
+		this.setLocationRelativeTo(parent);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);	
 	}
 	
