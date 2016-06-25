@@ -22,6 +22,7 @@ import readwrite.Configure;
 import readwrite.ResourcePath;
 import readwrite.WebStatus;
 import tool.MusicPlayer;
+import tool.MyLogger;
 import tool.RequestSender;
 
 @SuppressWarnings("serial")
@@ -115,11 +116,9 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		String action=e.getActionCommand();
 		if(action==null)
 			action="none";
-//System.out.println("Set?  "+alarmhasSet+"\nAmount="+Integer.parseInt(ReadStatus.subNum(ReadStatus.usedAmount)));
 		
 		//初始化自动登录按钮
 		if(FlowAppMainFrame.autoLogin)
@@ -147,8 +146,9 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 			try {
 				new AlarmSettingDialog(parent, ws.totalAmount);
 			} catch (UnsupportedEncodingException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				MyLogger.setLogger(this.getClass());
+				MyLogger.fatal(e1.getMessage());
 			}			
 		}
 		if(alarmhasSet)
@@ -184,7 +184,7 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 			try {
 				new RequestSender().login(ResourcePath.SERVERPATH, params);
 				}catch (IOException e1) {
-					// TODO Auto-generated catch block
+					MyLogger.fatal(this.getClass(),e1.getMessage());
 					JOptionPane.showMessageDialog(parent, "发送登录信息失败");	}
 		}
 		

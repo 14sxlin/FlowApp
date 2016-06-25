@@ -50,6 +50,7 @@ public abstract class InputDialog extends JDialog {
 		sureButton.addActionListener(e->{
 			sureAction();
 		});
+		this.getRootPane().setDefaultButton(sureButton);
 		//È¡Ïû°´Å¥
 		cancalButton.addActionListener(e->{
 			this.dispose();

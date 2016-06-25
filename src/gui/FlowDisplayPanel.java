@@ -19,6 +19,7 @@ import javax.swing.border.TitledBorder;
 import readwrite.AccountManager;
 import readwrite.ResourcePath;
 import readwrite.WebStatus;
+import tool.MyLogger;
 import tool.RequestSender;
 
 @SuppressWarnings("serial")
@@ -192,7 +193,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 				try {
 					new RequestSender().logout(ResourcePath.SERVERPATH);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
+					MyLogger.fatal(getClass(), e1.getMessage());
 					e1.printStackTrace();
 				}
 			//用别的账号登录
@@ -203,7 +204,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 					new RequestSender().login(ResourcePath.SERVERPATH, 
 							am.accountMap.get(key));
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
+					MyLogger.fatal(getClass(), e1.getMessage());
 					e1.printStackTrace();
 				}
 				time++;
@@ -235,7 +236,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 				this.setTexts();
 				ButtonAreaPanel.loginButton.setEnabled(true);			
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				MyLogger.fatal(getClass(), e1.getMessage()+" 发送退出消息失败");
 				JOptionPane.showMessageDialog(null, "发送退出信息失败");
 			}
 		

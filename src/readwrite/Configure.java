@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import tool.MyLogger;
+
 public class Configure {
 	
 	public static String filePath ;
@@ -34,11 +36,13 @@ public class Configure {
 				in.close();
 				return value;
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				MyLogger.setLogger(Configure.class);
+				MyLogger.info(e.getMessage());
+				createDefaultFile();
+				MyLogger.info("创建默认文件");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				MyLogger.fatal(e.getMessage());
 			}
 			return null;
     }
@@ -82,7 +86,6 @@ public class Configure {
 		out.close();
     }
     private static void createDefaultFile(OutputStream outs) {
-    	System.out.println(" create default file");
     	PrintWriter out = new PrintWriter(outs);
 		out.println(
 				"# load default config\r\n"+
@@ -98,14 +101,14 @@ public class Configure {
      * 把默认的配置写到文件里面去
      */
     public static void createDefaultFile() {
-    	System.out.println(" create default file");
     	OutputStream out = null;
-		try {
+    	try {
 			out = new FileOutputStream(filePath);
 			createDefaultFile(out);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			MyLogger.setLogger(Configure.class);
+			MyLogger.fatal("配置文件无法访问或找不到");
 		}
     }
 }

@@ -1,9 +1,5 @@
-/gui/
-/lin/
-/deprecated/
-/readwrite/
 /tool/
-/config.properties
-/sb.txt
-/testAll/
-/base64/
+/logconfig.properties
+/log4j.properties
+/gui/
+/readwrite/

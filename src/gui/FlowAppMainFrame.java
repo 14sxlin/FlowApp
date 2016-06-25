@@ -21,6 +21,7 @@ import readwrite.AccountManager;
 import readwrite.Configure;
 import readwrite.ResourcePath;
 import readwrite.WebStatus;
+import tool.MyLogger;
 
 @SuppressWarnings("serial")
 public class FlowAppMainFrame extends JFrame implements ActionListener, ItemListener, WindowListener{
@@ -42,21 +43,12 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	public static WebStatus ws;
 	public FlowAppMainFrame() {
 		Configure.setFilePath(ResourcePath.CONFIGPATH);
-		// TODO System Output Test Block
-		System.out.println(ResourcePath.CONFIGPATH);
-		try {
-			Configure.GetAllProperties();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
 		am = new AccountManager(ResourcePath.JARPATH,"account.txt");
 		try {
 			ws = new WebStatus(ResourcePath.SERVERPATH);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MyLogger.setLogger(this.getClass());
+			MyLogger.fatal(e.getMessage());
 		}
 		//GUI界面
 		this.setTitle("流量");
@@ -118,11 +110,6 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		 */
 	}
 	
-	public static void main(String[] args) {
-		new FlowAppMainFrame();
-	}
-
-	
 	//获取自动登录的状态
 	public  void getAutoLogin()
 	{
@@ -143,8 +130,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 				buttonPanel.autoSelectChBox.setSelected(true);
 			else buttonPanel.autoSelectChBox.setSelected(false);
 		} catch (NullPointerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			MyLogger.fatal(e.getMessage());
 			Configure.createDefaultFile();
 		}
 
@@ -194,7 +180,8 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 								f.createNewFile();
 								buttonPanel.accountSelectCombo.removeAllItems();
 							} catch (IOException e1) {
-								// TODO Auto-generated catch block
+								MyLogger.setLogger(this.getClass());
+								MyLogger.fatal("清空账户失败");
 								JOptionPane.showMessageDialog(this, "清空账号失败");
 							}
 				} 
@@ -223,11 +210,9 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	}
 
 	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	public void windowClosed(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -240,30 +225,31 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 				Configure.WriteProperties("defaultUser", ws.userName);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			MyLogger.fatal(e.getMessage());
 		}
 	}
 
 	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub		
 	}
 
-
+	public static void main(String[] args) {
+		MyLogger.loadConfigure();
+		MyLogger.setLogger(FlowAppMainFrame.class);
+		MyLogger.info("hello there");
+		new FlowAppMainFrame();
+	}
 	
 }

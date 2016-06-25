@@ -29,6 +29,7 @@ public abstract class SelectDialog extends JDialog {
 		sureButton.addActionListener(e->{
 			sureButtonAction();
 		});
+		this.getRootPane().setDefaultButton(sureButton);
 		cancelButton=new JButton("È¡Ïû");
 		cancelButton.addActionListener(e->{
 			this.dispose();
