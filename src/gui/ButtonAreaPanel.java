@@ -145,7 +145,7 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 					music=new MusicPlayerWithDialog(new File(AlarmSettingDialog.musicName),true,ButtonAreaPanel.alarmhasSet);
 				}
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
+				MyLogger.fatal(ButtonAreaPanel.class,e1.getMessage());
 				e1.printStackTrace();
 			}
 			music.play();
@@ -192,7 +192,9 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 			String defaultAccount = null;
 			defaultAccount=Configure.GetValueByKey("defaultUser");
 			if(defaultAccount==null||defaultAccount.equals(""))
-				setDefaultLoginAccount=new SetDefaultLoginAccount(am.usernames);
+				defaultAccount=Configure.GetValueByKey("lastLogin");
+			if(defaultAccount==null||defaultAccount.equals(""))
+				setDefaultLoginAccount=new SetDefaultLoginAccount(this,am.usernames);
 			params=am.accountMap.get(defaultAccount);
 			try {
 				new RequestSender().login(ResourcePath.SERVERPATH, params);

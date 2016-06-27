@@ -113,7 +113,6 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	//获取自动登录的状态
 	public  void getAutoLogin()
 	{
-		System.out.println(Configure.GetValueByKey("autoLogin"));
 		autoLogin = Configure.GetValueByKey("autoLogin").equals("true")?true:false;
 		if(autoLogin)
 		{	
@@ -141,7 +140,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		//设置自动登录的账号
 		if(e.getActionCommand().equals("设置自登账号")) {
 			if (am.usernameList.size()!=0) {
-				new SetDefaultLoginAccount(this,am.usernames); 
+				new SetDefaultLoginAccount(buttonPanel,am.usernames); 
 			}else JOptionPane.showMessageDialog(this, "请先添加账号");
 		}
 		

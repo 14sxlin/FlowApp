@@ -1,6 +1,8 @@
-/tool/
-/logconfig.properties
 /log4j.properties
+/pic/
+/sounds/
+/base64/
 /gui/
 /readwrite/
-/sounds/
+/testAll/
+/tool/

@@ -8,7 +8,6 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import readwrite.Configure;
@@ -18,7 +17,7 @@ public class SetDefaultLoginAccount extends JDialog implements ActionListener{
 	private JComboBox<String> accountSelectCombo;
 	private JButton sureButton,cancelButton;
 
-	public SetDefaultLoginAccount(JFrame jframe,String[] accouts) {
+	public SetDefaultLoginAccount(JPanel context,String[] accouts) {
 		this.setLayout(new GridLayout(2, 1));
 		accountSelectCombo=new JComboBox<String>(accouts);
 		this.add(accountSelectCombo);
@@ -32,7 +31,7 @@ public class SetDefaultLoginAccount extends JDialog implements ActionListener{
 		this.add(tempPanel);		
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setAlwaysOnTop(true);
-		this.setLocationRelativeTo(jframe);
+		this.setLocationRelativeTo(context);
 		this.setSize(120, 100);
 		this.setResizable(false);
 		this.setTitle("вт╣гук╨е");
