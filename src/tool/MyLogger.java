@@ -21,6 +21,10 @@ public abstract class MyLogger {
 		setLogger(myclass);
 		logger.info(message);
 	}
+	public static void debug(Class<?> myclass,String message) {
+		setLogger(myclass);
+		logger.debug(message);
+	}
 	
 	public static void warn(Class<?> myclass,String message) {
 		setLogger(myclass);

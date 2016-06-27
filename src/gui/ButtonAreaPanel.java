@@ -178,11 +178,9 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		if(!ws.isWebLost)
 		{	if(ws.loginStatus==1)
 			{	loginButton.setEnabled(false);
-	//			accountSelectCombo.setEditable(false);
 			}
 			else {
 				loginButton.setEnabled(true);
-	//			accountSelectCombo.setEditable(true);
 			}
 		}
 		
@@ -191,16 +189,24 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		{
 			String defaultAccount = null;
 			defaultAccount=Configure.GetValueByKey("defaultUser");
-			if(defaultAccount==null||defaultAccount.equals(""))
+			if(defaultAccount==null||defaultAccount.trim().equals(""))
 				defaultAccount=Configure.GetValueByKey("lastLogin");
-			if(defaultAccount==null||defaultAccount.equals(""))
+			if(defaultAccount==null||defaultAccount.trim().equals(""))
+			{	
+				MyLogger.debug(getClass(), "in button panel");
 				setDefaultLoginAccount=new SetDefaultLoginAccount(this,am.usernames);
-			params=am.accountMap.get(defaultAccount);
+				defaultAccount=Configure.GetValueByKey("defaultUser");
+			}
 			try {
+				params=am.accountMap.get(defaultAccount);
 				new RequestSender().login(ResourcePath.SERVERPATH, params);
 				}catch (IOException e1) {
-					MyLogger.fatal(this.getClass(),e1.getMessage());
-					JOptionPane.showMessageDialog(parent, "发送登录信息失败");	}
+					MyLogger.fatal(this.getClass(),e1.getMessage()+"发送登录消息失败");
+					JOptionPane.showMessageDialog(parent, "发送登录信息失败");	
+				}catch (NullPointerException e2) {
+					autoLoginChBox.setSelected(false);
+					MyLogger.info(this.getClass(),e2.getMessage()+" 不设置自登账号");
+				}
 		}
 		
 	}

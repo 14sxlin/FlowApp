@@ -140,7 +140,8 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		//设置自动登录的账号
 		if(e.getActionCommand().equals("设置自登账号")) {
 			if (am.usernameList.size()!=0) {
-				new SetDefaultLoginAccount(buttonPanel,am.usernames); 
+				MyLogger.debug(getClass(), "in main panel");
+				new SetDefaultLoginAccount(this,am.usernames); 
 			}else JOptionPane.showMessageDialog(this, "请先添加账号");
 		}
 		
