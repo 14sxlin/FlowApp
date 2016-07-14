@@ -40,6 +40,7 @@ public class Configure {
 				MyLogger.info(e.getMessage());
 				createDefaultFile();
 				MyLogger.info("创建默认文件");
+				return GetValueByKey(key);
 			} catch (IOException e) {
 				e.printStackTrace();
 				MyLogger.fatal(e.getMessage());

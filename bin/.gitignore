@@ -1,8 +1,6 @@
-/log4j.properties
-/pic/
-/sounds/
 /base64/
 /gui/
 /readwrite/
-/testAll/
 /tool/
+/testAll/
+
