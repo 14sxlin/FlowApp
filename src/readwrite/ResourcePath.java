@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import tool.Server;
 
 public interface ResourcePath {
+	public static final String STU_IMAGE_PATH = "/img/";
 	public static final String SERVERPATH=new Server().getServerPath()+"/?status=ok&url=";
 	public static final String DATAPATH=new Server().getServerPath();
 	public static final String JARPATH=ClassLoader.getSystemResource("").getPath();

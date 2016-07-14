@@ -1,5 +1,6 @@
 package testAll;
 import java.awt.AWTException;
+import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
@@ -10,6 +11,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -28,16 +32,29 @@ public class TrayByJdk extends JFrame implements ActionListener{
     private JPanel pane = null;
     private JButton button = null; // 启动托盘图标的按钮
     private JLabel label = null; // 用来显示系统是否支持托盘的信息
-    private TrayIcon trayIcon = null; // 托盘图标
+   
     private Timer shanshuo = null;
     private ImageIcon icon1 = null;
     private ImageIcon icon2 = null;
+    private TrayIcon trayIcon = null; // 托盘图标
     private SystemTray tray = null; // 本操作系统托盘的实例
     boolean gengai = false;
     //采用jdk1.6的托盘技术 实现跨平台的应用
     public TrayByJdk() {
         //super("托盘技术演示");
-        icon1 = new ImageIcon(this.getClass().getResource("/pic/1.gif").toString().substring(5)); // 将要显示到托盘中的图标
+//        icon1 = new ImageIcon(
+//        		this.getClass().getResource("/pic/1.gif")
+//        		.toString().substring(5)); // 将要显示到托盘中的图标
+//        System.out.println(this.getClass().getResource("/pic/1.gif")
+//        		.toString().substring(5));//这种方式获取到的是系统的路径
+    	try {
+			Image image = ImageIO.read(
+					getClass().getResourceAsStream("/pic/1.gif"));
+			icon1 = new ImageIcon(image);
+    	} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         icon2 = new ImageIcon(this.getClass().getResource("/pic/2.gif").toString().substring(5)); // 将要显示到托盘中的图标
         try {
             // 将LookAndFeel设置成Windows样式
@@ -90,9 +107,12 @@ public class TrayByJdk extends JFrame implements ActionListener{
         MenuItem author = new MenuItem("Author");       
         /**
          * TrayIcon有三个构造
-         * TrayIcon(Image image) 用“图标”来构造
-         * TrayIcon(Image image, String tooltip) 用“图标”和“ToolTip”构造
-         * TrayIcon(Image image, String tooltip, PopupMenu popup) 用“图标”，“ToolTip”，“弹出菜单”来构造一个托盘图标
+         * TrayIcon(Image image) 
+         * 用“图标”来构造
+         * TrayIcon(Image image, String tooltip) 
+         * 用“图标”和“ToolTip”构造
+         * TrayIcon(Image image, String tooltip, PopupMenu popup) 
+         * 用“图标”，“ToolTip”，“弹出菜单”来构造一个托盘图标
          */
         trayIcon = new TrayIcon(icon1.getImage(), "托盘技术演示", pop);
         // 点击本按钮后窗口被关闭，托盘图标被添加到系统的托盘中
