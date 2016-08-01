@@ -31,6 +31,7 @@ import readwrite.Configure;
 import readwrite.ResourcePath;
 import readwrite.WebStatus;
 import tool.MyLogger;
+import tool.TimerControl;
 
 @SuppressWarnings("serial")
 public class FlowAppMainFrame extends JFrame implements ActionListener, ItemListener, WindowListener{
@@ -52,8 +53,10 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	public static boolean inside=false;//内部的组件
 	public static AccountManager am;
 	public static WebStatus ws;
+	public static TimerControl timeControl;
 	public FlowAppMainFrame() {
 		Configure.setFilePath(ResourcePath.CONFIGPATH);
+		timeControl = new TimerControl();
 		am = new AccountManager(ResourcePath.JARPATH,"account.txt");
 		try {
 			ws = new WebStatus(ResourcePath.SERVERPATH);
@@ -121,15 +124,6 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		this.addWindowListener(this);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
-		//System.out.println("Class= "+this.getClass().getResource("").getPath());
-		//System.out.println("ClassLoad="+this.getClass().getClassLoader().getResource("").getPath());
-		//System.out.println("SystemLoad="+ClassLoader.getSystemResource("").getPath());
-		/*
-		 * 导出的jar包输出结果
-		 * Class= lin/gui/ 获取到包内的
-			ClassLoad=		什么都获取不到
-			SystemLoad=/C:/Users/think/Desktop/ 获取到包外的路径
-		 */
 	}
 	
 	/**
@@ -150,9 +144,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 				
 				if(e.getActionCommand().equals("显示主窗口"))
 				{	
-					tray.remove(trayIcon);
-					this.setExtendedState(JFrame.NORMAL);
-					this.setVisible(true);
+					restoreFrame();
 				}
 				if(e.getActionCommand().equals("退出"))
 				{	
@@ -173,9 +165,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 				public void mouseClicked(MouseEvent e) {
 					if(e.getClickCount()==2)
 					{
-						tray.remove(trayIcon);
-						FlowAppMainFrame.this.setVisible(true);
-						FlowAppMainFrame.this.setExtendedState(JFrame.NORMAL);
+						restoreFrame();
 					}
 				}
 				
@@ -186,9 +176,15 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		}
 	}
 	
+	private void restoreFrame() {
+		timeControl.setTimerMode(TimerControl.FAST_MODE);
+		tray.remove(trayIcon);
+		FlowAppMainFrame.this.setVisible(true);
+		FlowAppMainFrame.this.setExtendedState(JFrame.NORMAL);
+	}
 	
 	//获取自动登录的状态
-	public  void getAutoLogin()
+ 	public  void getAutoLogin()
 	{
 		autoLogin = Configure.GetValueByKey("autoLogin").equals("true")?true:false;
 		if(autoLogin)
@@ -331,6 +327,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		if(tray==null)
 			return;
 		try {
+			timeControl.setTimerMode(TimerControl.SLOW_MODE);
 			tray.add(trayIcon);
 			this.setVisible(false);
 		} catch (AWTException e) {

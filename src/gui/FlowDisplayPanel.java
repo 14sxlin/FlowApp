@@ -21,12 +21,10 @@ import readwrite.ResourcePath;
 import readwrite.WebStatus;
 import tool.MyLogger;
 import tool.RequestSender;
+import tool.TimerControl;
 
 @SuppressWarnings("serial")
 public class FlowDisplayPanel extends JPanel implements ActionListener {
-	/*
-	 * 记得退出的时候把时间关掉
-	 */
 	public JTextField usedText,totalText,remainText,nameText;//用来显示流量的数值
 	public JLabel statusLabel;
 	public JButton logoutButton;
@@ -111,13 +109,13 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
     	
     	if (!ws.isWebLost) {
 			ws.loadHtml();
-			timer = new Timer(1000, this);
+			timer = new Timer(TimerControl.FAST_MODE, this);
+			FlowAppMainFrame.timeControl.addTimer(timer);
 			if (ws.loginStatus == 1)
 				timer.setDelay(ws.timer.getDelay());
 			timer.start();
 		}else
 		{
-//System.out.println("weblost");
 			statusLabel.setForeground(Color.blue);
 			statusLabel.setText("已断网");
 			logoutButton.setEnabled(false);			

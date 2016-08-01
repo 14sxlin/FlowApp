@@ -13,7 +13,9 @@ import java.util.regex.Pattern;
 
 import javax.swing.Timer;
 
+import gui.FlowAppMainFrame;
 import tool.MyLogger;
+import tool.TimerControl;
 
 public class WebStatus implements ActionListener {
 	/*
@@ -36,8 +38,10 @@ public class WebStatus implements ActionListener {
 	
 	public WebStatus(String serverURL) throws IOException {
 		this.serverURL = serverURL;
+		htmldata = new StringBuilder();
 		try {
-			timer=new Timer(1000, this);
+			timer=new Timer(TimerControl.FAST_MODE, this);
+			FlowAppMainFrame.timeControl.addTimer(timer);
 			timer.start();		
 		} catch (Exception e) {
 			MyLogger.setLogger(getClass());
@@ -62,7 +66,7 @@ public class WebStatus implements ActionListener {
 			InputStream in=con.getInputStream();
 			br=new BufferedReader(new InputStreamReader(in));
 			String line;
-			htmldata = new StringBuilder();
+			htmldata.delete(0, htmldata.length());
 			while ((line = br.readLine()) != null) {
 				htmldata.append(line);
 			}

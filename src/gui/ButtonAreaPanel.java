@@ -25,6 +25,7 @@ import readwrite.WebStatus;
 import tool.MusicPlayerWithDialog;
 import tool.MyLogger;
 import tool.RequestSender;
+import tool.TimerControl;
 
 @SuppressWarnings("serial")
 public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListener {
@@ -103,7 +104,8 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		this.add(autoSelectChBox);
 		
 		//Æô¶¯Ê±¼äÆ÷
-		timer=new Timer(1000, this);
+		timer=new Timer(TimerControl.FAST_MODE, this);
+		FlowAppMainFrame.timeControl.addTimer(timer);
 		if(!ws.isWebLost)
 			timer.start();
 		else loginButton.setEnabled(false);
