@@ -18,19 +18,24 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
+import org.apache.http.client.ClientProtocolException;
+
 import readwrite.AccountManager;
 import readwrite.Configure;
 import readwrite.ResourcePath;
-import readwrite.WebStatus;
+import readwrite.UseInfo;
 import tool.MusicPlayerWithDialog;
 import tool.MyLogger;
+import tool.ParamsAdapter;
 import tool.RequestSender;
 import tool.TimerControl;
 
 @SuppressWarnings("serial")
 public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListener {
-	private WebStatus ws;
+//	private WebStatus ws;
+	public static boolean isWebLost = false;
 	private JFrame parent;
+	private String lastParam;
 	public  JComboBox<String> accountSelectCombo;
 	public  static JButton loginButton;
 	public  JButton addUser;
@@ -46,9 +51,9 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 	private AccountManager am;
 	//记录是不是初始化的时候的激发的自动选择
 	public 	int i=0;
-	public ButtonAreaPanel(JFrame parent,AccountManager am,WebStatus ws) {
+	public ButtonAreaPanel(JFrame parent,AccountManager am) {
 		this.am = am;
-		this.ws = ws;
+//		this.ws = ws;
 		this.parent = parent;
 		this.setLayout(new GridLayout(3, 2));
 		alarmButton=new JButton("设置提醒");
@@ -72,19 +77,16 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		
 		loginButton=new JButton("登录");
 		loginButton.addActionListener(e->{
-			if(!ws.isWebLost)
-			{	
-				String temp=((String) accountSelectCombo.getSelectedItem()).trim();		
-				if(temp!=null&&ws.loginStatus==WebStatus.OUT)
-				{	
-					params=am.accountMap.get(temp);
-					try {
-						new RequestSender().login(ResourcePath.SERVERPATH	, params);
-						}catch (IOException e1) {
-						JOptionPane.showMessageDialog(parent, "发送登录信息失败");
-					}
-				}
-				else JOptionPane.showMessageDialog(parent, "请先退出已登录的账号");
+			String temp=((String) accountSelectCombo.getSelectedItem()).trim();		
+			params=am.accountMap.get(temp);
+			try {
+				if(RequestSender.login(ResourcePath.SERVERPATH, 
+						ParamsAdapter.String2List(params)).contains("false"))
+				{
+					JOptionPane.showMessageDialog(parent, "发送登录信息失败,请先退出已登录的账号");
+				};
+			}catch (IOException e1) {
+				JOptionPane.showMessageDialog(parent, "发送登录信息失败");
 			}
 		});
 		
@@ -106,11 +108,11 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		//启动时间器
 		timer=new Timer(TimerControl.FAST_MODE, this);
 		FlowAppMainFrame.timeControl.addTimer(timer);
-		if(!ws.isWebLost)
+		if(!isWebLost)
 			timer.start();
 		else loginButton.setEnabled(false);
 //System.out.println("loginState="+ReadStatus.loginStatus);
-		if(ws.loginStatus==WebStatus.IN)
+		if(UseInfo.isLogin)
 			loginButton.setEnabled(false);
 		
 //System.out.println("Class= "+this.getClass().getResource("").getPath());
@@ -119,6 +121,17 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		try {
+			UseInfo.Refresh();
+		} catch (ClientProtocolException e3) {
+			//TODO
+			e3.printStackTrace();
+			isWebLost=true;
+		} catch (IOException e3) {
+			//TODO
+			e3.printStackTrace();
+			isWebLost=true;
+		}
 		String action=e.getActionCommand();
 		if(action==null)
 			action="none";
@@ -134,8 +147,8 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		else autoSelectChBox.setSelected(false);
 		
 		//流量提醒的检查
-		if(!ws.isWebLost&&(alarmhasSet)&&
-				ws.usedAmount>=AlarmSettingDialog.alarmAmount)
+		if(alarmhasSet&&
+				UseInfo.used>=AlarmSettingDialog.alarmAmount)
 		{
 			try {
 				if(AlarmSettingDialog.indexOfMusic>=0&&AlarmSettingDialog.indexOfMusic<=8)
@@ -159,7 +172,7 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		if(action.equals("设置提醒"))
 		{	FlowAppMainFrame.inside=true;
 			try {
-				new AlarmSettingDialog(parent, ws.totalAmount);
+				new AlarmSettingDialog(parent, UseInfo.total);
 			} catch (UnsupportedEncodingException e1) {
 				e1.printStackTrace();
 				MyLogger.setLogger(this.getClass());
@@ -176,9 +189,9 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 			alarmButton.setActionCommand("设置提醒");
 		}
 		
-		//登录按钮的检查
-		if(!ws.isWebLost)
-		{	if(ws.loginStatus==1)
+//		//登录按钮的检查
+		if(!isWebLost)
+		{	if(UseInfo.isLogin)
 			{	loginButton.setEnabled(false);
 			}
 			else {
@@ -187,7 +200,7 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		}
 		
 		//自动登录的检查,如果登出了,自动发送登录信息
-		if(!ws.isWebLost&&autoLoginChBox.isSelected()&&ws.loginStatus==0)
+		if(autoLoginChBox.isSelected()&&UseInfo.isLogin)
 		{
 			String defaultAccount = null;
 			defaultAccount=Configure.GetValueByKey("defaultUser");
@@ -201,15 +214,61 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 			}
 			try {
 				params=am.accountMap.get(defaultAccount);
-				new RequestSender().login(ResourcePath.SERVERPATH, params);
-				}catch (IOException e1) {
+				if(!params.equals(lastParam))
+				{
+					System.out.println("use "+params +"to login");
+					new RequestSender();
+					RequestSender.login(ResourcePath.SERVERPATH, ParamsAdapter.String2List(params));
+					lastParam = params;
+				}
+				
+			}catch (IOException e1) {
 					MyLogger.fatal(this.getClass(),e1.getMessage()+"发送登录消息失败");
 					JOptionPane.showMessageDialog(parent, "发送登录信息失败");	
 				}catch (NullPointerException e2) {
 					autoLoginChBox.setSelected(false);
 					MyLogger.info(this.getClass(),e2.getMessage()+" 不设置自登账号");
-				}
+				} 
 		}
+		
+		//自动切换 
+		if(!isWebLost&&autoSelectChBox.isSelected()&&UseInfo.isLogin)
+		{
+			int count = 0;
+			int itemCount = accountSelectCombo.getItemCount();
+			while(UseInfo.useOut&&count<=itemCount)
+			{
+				count++;
+				int index = am.usernameList.indexOf(UseInfo.userName);
+				index = (index+1)%itemCount;
+				String name = am.usernameList.get(index);
+				String params = am.accountMap.get(name);
+				System.out.println("itemcount = "+itemCount);
+				System.out.println("index = "+index);
+				System.out.println("count  = "+count);
+				System.out.println("params = "+params);
+				
+				try {
+					new RequestSender();
+					RequestSender.logout(ResourcePath.SERVERPATH);
+					if(!params.equals(lastParam))
+					{
+						Thread.sleep(500);
+						System.out.println("use "+params +"to login");
+						new RequestSender();
+						RequestSender.login(ResourcePath.SERVERPATH, ParamsAdapter.String2List(params));
+						lastParam = params;
+//					Thread.sleep(500);
+					}
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		} //end if
 		
 	}
 
@@ -219,8 +278,8 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 			//自动登录的功能记录
 			if(autoLoginChBox.isSelected())
 			{	FlowAppMainFrame.autoLogin=true;//这是为了让flowdisplay的按钮不可用	,传递全局信息		
-				if(ws.userName!=null)
-					Configure.WriteProperties("lastLogin", ws.userName);
+				if(!UseInfo.userName.equals(""))
+					Configure.WriteProperties("lastLogin", UseInfo.userName);
 				Configure.WriteProperties("autoLogin", "true");
 				
 				//写入是否自动切换的资料 不要在这里记录文件,因为初始化的时候会先有未选中的状态

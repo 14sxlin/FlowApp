@@ -1,78 +1,52 @@
 package tool;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 
 
+@SuppressWarnings("deprecation")
 public class RequestSender {
-	private HttpURLConnection con;
-	private OutputStreamWriter out;
-	URL url;
 	public RequestSender() throws IOException {}
 	
-	public void login(String serverpath,String params) throws IOException
+	public static String login(String serverpath,List<NameValuePair> params) throws IOException
 	{
-		try {
-			url=new URL(serverpath);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String info ="";
+		@SuppressWarnings("resource")
+		HttpClient client = new DefaultHttpClient();
+		HttpPost post = new HttpPost(serverpath);
+        post.setEntity(new UrlEncodedFormEntity(params));  
+		HttpResponse response = client.execute(post);
+		HttpEntity entity = response.getEntity();
+		if(entity!=null)
+		{
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(entity.getContent(),"utf-8"));
+			String line = "";
+			while((line = bufferedReader.readLine())!=null)
+			{
+				info+=line;
+			}
 		}
-		try {
-			con=(HttpURLConnection) url.openConnection();
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setUseCaches(false);
-			con.setConnectTimeout(1000);
-			con.setReadTimeout(1000);
-			con.connect();
-			out=new OutputStreamWriter(con.getOutputStream(), "UTF-8");
-			out.write(params);
-			out.flush();
-			out.close();
-			con.getResponseCode();//这句话是跟服务器说我发给你的内容结束了
-			con.disconnect();
-//System.out.println(con.getResponseCode());//就算是断开连接了也能得到什么,而且两次的结果是一样的
-		} catch (SocketTimeoutException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-
+		return info;
 	}
 	
-	public void logout(String serverpath) throws IOException
+	public static void logout(String serverpath) throws IOException
 	{
-		String params="logout=";//好像随便发点什么就能退出登录
-		try {			
-			url=new URL(serverpath);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		try {
-			con=(HttpURLConnection) url.openConnection();
-			con.setRequestMethod("POST");
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setUseCaches(false); 
-			con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			con.setRequestProperty("Content-Length", String.valueOf(params.length()));
-			con.connect();
-			out=new OutputStreamWriter(con.getOutputStream(), "utf-8");
-			out.write(params);
-			out.flush();
-			out.close();
-			con.getResponseCode();
-			con.disconnect();
-		} catch (SocketTimeoutException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		List<NameValuePair> param = new ArrayList<>();
+		param.add(new BasicNameValuePair("opr", "logout"));
+		login(serverpath, param);
 	}
 }

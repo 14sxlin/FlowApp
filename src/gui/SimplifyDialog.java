@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,7 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
-import readwrite.WebStatus;
+import readwrite.UseInfo;
 
 @SuppressWarnings("serial")
 public class SimplifyDialog extends JDialog implements WindowListener,ActionListener {
@@ -25,9 +26,7 @@ public class SimplifyDialog extends JDialog implements WindowListener,ActionList
 	private GridBagLayout gridbag;
 	private GridBagConstraints constraints;
 	private JPanel jPanel;
-	private WebStatus ws;
-	public SimplifyDialog( WebStatus ws,boolean inCheck,Timer timer) {
-		this.ws = ws;
+	public SimplifyDialog(boolean inCheck,Timer timer) {
 		jPanel=new JPanel();
     	jPanel.setBorder(new TitledBorder("流量"));
     	gridbag=new GridBagLayout();
@@ -65,8 +64,8 @@ public class SimplifyDialog extends JDialog implements WindowListener,ActionList
     	statusLabel.setForeground(Color.red);
     	jPanel.add(statusLabel, constraints);
     	
-    	if(ws.loginStatus==1)
-    		this.setTitle(ws.userName);
+    	if(UseInfo.isLogin)
+    		this.setTitle(UseInfo.userName);
     	this.setSize(120, 120);
     	Dimension d=getToolkit().getScreenSize();
     	this.setLocation(d.width-150,0);
@@ -83,43 +82,47 @@ public class SimplifyDialog extends JDialog implements WindowListener,ActionList
 	
 	public void setLoginStatus()
     {
-			if(!ws.isWebLost)
-	    	{	if(ws.loginStatus==1)
+//			if(!ws.isWebLost) //TODO
+//	    	{	
+	    		if(UseInfo.isLogin)
 	    		{	statusLabel.setForeground(Color.green);
-	    		statusLabel.setText("已登录");
+	    			statusLabel.setText("已登录");
 	    		}
-	    		else if(ws.loginStatus==0)
+	    		else
 	    		{
 	    			statusLabel.setForeground(Color.red);
 	    			statusLabel.setText("未登录");
-	    		}else {
-	    			statusLabel.setForeground(Color.blue);
-	    		statusLabel.setText("用户名或密码错误");
-	    	}
-	    	if(ws.useOut)
-	    	{
-	    		statusLabel.setForeground(Color.blue);
-	    		statusLabel.setText("流量已用完");
-	    	}}
-			else {
-				statusLabel.setForeground(Color.blue);
-				statusLabel.setText("已断网");
-			}
+	    		}
+//	    	else {
+//	    			statusLabel.setForeground(Color.blue);
+//	    		statusLabel.setText("用户名或密码错误");
+//	    		}
+//	    	if(ws.useOut) //TODO
+//	    	{
+//	    		statusLabel.setForeground(Color.blue);
+//	    		statusLabel.setText("流量已用完");
+//	    	}}
+//			else {
+//				statusLabel.setForeground(Color.blue);
+//				statusLabel.setText("已断网");
+//			}
     }
 
 	public void setTexts()
-    {	if(!ws.isWebLost)
-    	{	this.setTitle(ws.userName);
-	    	this.usedText.setText(""+ws.usedAmount);
-	    	this.remainText.setText(""+ws.remainAmount);
+    {	
+//		if(!ws.isWebLost)//TODO
+//    	{	
+    		this.setTitle(UseInfo.userName);
+	    	this.usedText.setText(""+UseInfo.used);
+	    	this.remainText.setText(""+UseInfo.remain);
 	    	this.setLoginStatus();
-    	}else
-    	{
-    		this.setTitle(ws.userName);
-	    	this.usedText.setText("");
-	    	this.remainText.setText("");
-	    	this.setLoginStatus();
-    	}
+//    	}else
+//    	{
+//    		this.setTitle(ws.userName);
+//	    	this.usedText.setText("");
+//	    	this.remainText.setText("");
+//	    	this.setLoginStatus();
+//    	}
     }
 	
 

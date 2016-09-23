@@ -16,9 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
-import readwrite.AccountManager;
 import readwrite.ResourcePath;
-import readwrite.WebStatus;
+import readwrite.UseInfo;
 import tool.MyLogger;
 import tool.RequestSender;
 import tool.TimerControl;
@@ -31,12 +30,9 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 	private GridBagLayout gridbag;
 	private GridBagConstraints constraints;
 	public  Timer timer;
-	private WebStatus ws;
-	private AccountManager am;
+//	private WebStatus ws;
 	//参数显示要不要精简模式,测试时用false
-    public FlowDisplayPanel(boolean simplify,AccountManager am,WebStatus ws) {
-    	this.am = am;
-    	this.ws = ws;
+    public FlowDisplayPanel(boolean simplify) {
     	//流量展示区
     	this.setBorder(new TitledBorder("流量"));
     	gridbag=new GridBagLayout();
@@ -107,14 +103,14 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
     	logoutButton.setEnabled(false);
     	this.add(logoutButton, constraints);
     	
-    	if (!ws.isWebLost) {
-			ws.loadHtml();
+    	if (!ButtonAreaPanel.isWebLost) { 
 			timer = new Timer(TimerControl.FAST_MODE, this);
 			FlowAppMainFrame.timeControl.addTimer(timer);
-			if (ws.loginStatus == 1)
-				timer.setDelay(ws.timer.getDelay());
+//			if (UseInfo.isLogin)
+//				timer.setDelay(TimerControl.FAST_MODE);
 			timer.start();
-		}else
+		}
+    	else
 		{
 			statusLabel.setForeground(Color.blue);
 			statusLabel.setText("已断网");
@@ -124,43 +120,48 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
     
     //设置显示的数据
     public void setTexts()
-    {	if(!ws.isWebLost)
+    {	
+    	if(!ButtonAreaPanel.isWebLost)
     	{
-    		this.nameText.setText(ws.userName);
-    		this.usedText.setText(""+ws.usedAmount);
-    		this.totalText.setText(""+ws.totalAmount);
-    		this.remainText.setText(""+ws.remainAmount);
-    		this.setLoginStatus();
+    		this.nameText.setText(UseInfo.userName);
+			this.usedText.setText(""+UseInfo.used);
+			this.totalText.setText(""+UseInfo.total);
+			this.remainText.setText(""+UseInfo.remain);
+			this.setLoginStatus();
     	}
+    	
     }
     
     //设置状态标签显示的内容 包括已登录,未登录,用户名或密码错误,流量已用完,已断网
     public void setLoginStatus()
     {
-    	if(!ws.isWebLost)	
-		{	if(ws.loginStatus==1)
+    	if(!ButtonAreaPanel.isWebLost)	
+		{	
+    		if(UseInfo.isLogin)
 			{	statusLabel.setForeground(Color.green);
 				statusLabel.setText("已登录");
 				logoutButton.setEnabled(true);
 			}
-			else if(ws.loginStatus==0)
+			else 
 			{
 				statusLabel.setForeground(Color.red);
 				statusLabel.setText("未登录");
 				logoutButton.setEnabled(false);
-			}else {
-				statusLabel.setForeground(Color.blue);
-				statusLabel.setText("用户名或密码错误");
-				logoutButton.setEnabled(false);
 			}
-			if(ws.useOut)
+//			else {
+//				statusLabel.setForeground(Color.blue);
+//				statusLabel.setText("用户名或密码错误");
+//				logoutButton.setEnabled(false);
+//			}
+			if(UseInfo.useOut)
 			{
 				statusLabel.setForeground(Color.blue);
 				statusLabel.setText("流量已用完");
 				logoutButton.setEnabled(false);
 			}
 			if(FlowAppMainFrame.autoLogin)
-			{	logoutButton.setEnabled(false);
+			{	
+				logoutButton.setEnabled(false);
 			}
 			else {
 				logoutButton.setEnabled(true);
@@ -180,49 +181,49 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 		
 		//设置面板的数据
 		this.setLoginStatus();
-		//自动切换账号登录
-		if(ws.useOut&&FlowAppMainFrame.autoSelect)
-		{
-			//记录试了几个账号
-			int time=0;
-			
-			//如果是登录着,发送退出的信息
-			if(ws.loginStatus==1)
-				try {
-					new RequestSender().logout(ResourcePath.SERVERPATH);
-				} catch (IOException e1) {
-					MyLogger.fatal(getClass(), e1.getMessage());
-					e1.printStackTrace();
-				}
-			//用别的账号登录
-			while(time<am.usernameList.size())		
-			{
-				String key=am.usernameList.get(time);
-				try {
-					new RequestSender().login(ResourcePath.SERVERPATH, 
-							am.accountMap.get(key));
-				} catch (IOException e1) {
-					MyLogger.fatal(getClass(), e1.getMessage());
-					e1.printStackTrace();
-				}
-				time++;
-				//如果登上了而且该账号流量没用完的话,就退出
-				if(ws.loginStatus==1&&!ws.useOut)
-					break;
-			}
-			
-			//如果全部账号用完了,还是没登上,可能是用户名或密码错误
-			if(time==am.usernameList.size()&&ws.loginStatus==0)
-			{		JOptionPane.showMessageDialog(this, "已经没有可用的账号了");
-					FlowAppMainFrame.autoSelect=false;}
-			
-			//如果全部账号用完了,还是没流量
-			if(time==am.usernameList.size()&&ws.useOut)
-			{	JOptionPane.showMessageDialog(this, "你拥有的账号流量全部用完了");
-				FlowAppMainFrame.autoSelect=false;
-			}
-			
-		}
+//		//自动切换账号登录
+//		if(ws.useOut&&FlowAppMainFrame.autoSelect)
+//		{
+//			//记录试了几个账号
+//			int time=0;
+//			
+//			//如果是登录着,发送退出的信息
+//			if(ws.loginStatus==1)
+//				try {
+//					new RequestSender().logout(ResourcePath.SERVERPATH);
+//				} catch (IOException e1) {
+//					MyLogger.fatal(getClass(), e1.getMessage());
+//					e1.printStackTrace();
+//				}
+//			//用别的账号登录
+//			while(time<am.usernameList.size())		
+//			{
+//				String key=am.usernameList.get(time);
+//				try {
+//					new RequestSender().login(ResourcePath.SERVERPATH, 
+//							am.accountMap.get(key));
+//				} catch (IOException e1) {
+//					MyLogger.fatal(getClass(), e1.getMessage());
+//					e1.printStackTrace();
+//				}
+//				time++;
+//				//如果登上了而且该账号流量没用完的话,就退出
+//				if(ws.loginStatus==1&&!ws.useOut)
+//					break;
+//			}
+//			
+//			//如果全部账号用完了,还是没登上,可能是用户名或密码错误
+//			if(time==am.usernameList.size()&&ws.loginStatus==0)
+//			{		JOptionPane.showMessageDialog(this, "已经没有可用的账号了");
+//					FlowAppMainFrame.autoSelect=false;}
+//			
+//			//如果全部账号用完了,还是没流量
+//			if(time==am.usernameList.size()&&ws.useOut)
+//			{	JOptionPane.showMessageDialog(this, "你拥有的账号流量全部用完了");
+//				FlowAppMainFrame.autoSelect=false;
+//			}
+//			
+//		}
 		
 		//更新精简面板的数据
 		if(FlowAppMainFrame.simplifyDialog!=null)
@@ -230,7 +231,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 		this.setTexts();
 		if(e.getSource()==logoutButton)
 			try {
-				new RequestSender().logout(ResourcePath.SERVERPATH);					
+				RequestSender.logout(ResourcePath.SERVERPATH);					
 				this.setTexts();
 				ButtonAreaPanel.loginButton.setEnabled(true);			
 			} catch (IOException e1) {
@@ -239,7 +240,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 			}
 		
 		//检查退出登录的按钮
-		if(ws.loginStatus==0)
-			logoutButton.setEnabled(false);
+		if(UseInfo.isLogin)
+			logoutButton.setEnabled(true);
 	}
 }

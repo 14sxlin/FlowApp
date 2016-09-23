@@ -3,29 +3,45 @@ package tool;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
-public class Server {
+public class Server implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	public String loginURL;
+	public String infoURL;
 	
 	private StringBuilder sb;
+	
+	public Server() {
+		sb = new StringBuilder();
+	}
 	
 	/**
 	 * 获取服务器的URL
 	 * @return
 	 */
+	@Deprecated
 	public String getServerPath()
 	{
 		openWebsite();
 		return getFrameSrc();
 	}
 	
-	private void openWebsite() {
+	@Deprecated
+	public void openWebsite() {
 		URL url = null;
 		try {
-			url=new URL("http://internet.stu.edu.cn/");
+//			url=new URL("http://internet.stu.edu.cn/");
+			url=new URL("http://1.1.1.2/");
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,6 +80,7 @@ public class Server {
 	 * 获取网页中的iframe标签的src的属性的值
 	 * @return
 	 */
+	@Deprecated
 	private String getFrameSrc() {
 		String mark = "<iframe width=\"100%\" height=\"100%\" src=\"";
 		int frameIndex =
@@ -76,4 +93,5 @@ public class Server {
 		int end = sb.indexOf("\"", frameIndex+mark.length()+1);
 		return sb.substring(frameIndex+mark.length(), end);
 	}
+	
 }

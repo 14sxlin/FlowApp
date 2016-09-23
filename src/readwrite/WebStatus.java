@@ -17,6 +17,12 @@ import gui.FlowAppMainFrame;
 import tool.MyLogger;
 import tool.TimerControl;
 
+@Deprecated
+/**
+ * 
+ * @author Linsixin
+ * 使用UseInfo替代
+ */
 public class WebStatus implements ActionListener {
 	/*
 	 * 1.记得退出的时候把时间关掉
@@ -57,6 +63,7 @@ public class WebStatus implements ActionListener {
 	 * 保存到成员变量里面
 	 * @param serverURL 服务器的URL
 	 */
+	@Deprecated
 	public void loadHtml() {
 		BufferedReader br=null;
 		try {
@@ -166,6 +173,7 @@ public class WebStatus implements ActionListener {
 	 * @param input html页面的数据
 	 * @return
 	 */
+	@Deprecated
 	private  String loadUserName()
 	{
 		if (!isWebLost) {

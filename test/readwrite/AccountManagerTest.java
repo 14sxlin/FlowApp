@@ -9,8 +9,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import readwrite.AccountManager;
-
 public class AccountManagerTest {
 
 	private static File file;
@@ -47,6 +45,7 @@ public class AccountManagerTest {
 //		for(String item:am.usernameList)
 //			System.out.println(item);
 //		System.out.println("------------------");
+		
 		assertEquals("AuthenticateUser=2&AuthenticatePassword=doubi&shit", am.accountMap.get("2"));
 		assertEquals(10, am.usernames.length);
 	}

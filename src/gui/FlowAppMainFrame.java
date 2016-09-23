@@ -29,7 +29,7 @@ import javax.swing.JSplitPane;
 import readwrite.AccountManager;
 import readwrite.Configure;
 import readwrite.ResourcePath;
-import readwrite.WebStatus;
+import readwrite.UseInfo;
 import tool.MyLogger;
 import tool.TimerControl;
 
@@ -52,18 +52,12 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	public static boolean autoLogin;
 	public static boolean inside=false;//内部的组件
 	public static AccountManager am;
-	public static WebStatus ws;
+//	public static WebStatus ws;
 	public static TimerControl timeControl;
 	public FlowAppMainFrame() {
 		Configure.setFilePath(ResourcePath.CONFIGPATH);
 		timeControl = new TimerControl();
 		am = new AccountManager(ResourcePath.JARPATH,"account.txt");
-		try {
-			ws = new WebStatus(ResourcePath.SERVERPATH);
-		} catch (IOException e) {
-			MyLogger.setLogger(this.getClass());
-			MyLogger.fatal(e.getMessage());
-		}
 		try {
 			Image image =ImageIO.read(this.getClass().getResourceAsStream("/img/sign.jpg"));
 			this.setIconImage(image);
@@ -76,9 +70,9 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		initTray();
 		
 		//GUI界面
-		this.setTitle("流量");
-		this.setBounds(400, 200, 200, 330);
-		this.setResizable(false);
+//		this.setTitle("流量");
+		this.setBounds(400, 200, 250, 350);
+		this.setResizable(true);
 	
 		menubar=new JMenuBar();
 		this.setJMenuBar(menubar);
@@ -106,12 +100,14 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		chekboxItem[0].setSelected(true);
 		
 		//流量展示区域
-		displayPanel=new FlowDisplayPanel(true, am,ws);
+		displayPanel=new FlowDisplayPanel(true);
 		split=new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		split.add(displayPanel);
 		split.setOneTouchExpandable(true);
+		split.setDividerLocation(0.6);
+		
 		//下面的按钮区域
-		buttonPanel=new ButtonAreaPanel(this, am,ws);
+		buttonPanel=new ButtonAreaPanel(this, am);
 		split.add(buttonPanel);	
 		this.add(split);
 		
@@ -276,7 +272,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		//显示精简面板
 		if(chekboxItem[1].isSelected()&&simplifyDialog==null)
 		{		this.setVisible(false);
-				simplifyDialog=new SimplifyDialog(ws,true,displayPanel.timer);
+				simplifyDialog=new SimplifyDialog(true,displayPanel.timer);
 		}
 		if(!chekboxItem[1].isSelected()&&simplifyDialog!=null)
 		{	simplifyDialog.dispose();
@@ -292,7 +288,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		try {
 			if(autoLogin)
 			{	
-				Configure.WriteProperties("defaultUser", ws.userName);
+				Configure.WriteProperties("defaultUser", UseInfo.userName);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -307,7 +303,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		try {
 			if(autoLogin)
 			{	
-				Configure.WriteProperties("defaultUser", ws.userName);
+				Configure.WriteProperties("defaultUser", UseInfo.userName);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
