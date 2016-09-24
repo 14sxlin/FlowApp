@@ -7,9 +7,9 @@ import javax.swing.Timer;
 
 public class TimerControl {
 	private List<Timer> timerList;
-	public static final int SLOW_MODE = 5000;
-	public static final int MID_MODE = 3000;
-	public static final int FAST_MODE = 1000;
+	public static final int SLOW_MODE = 20000;
+	public static final int MID_MODE = 10000;
+	public static final int FAST_MODE = 5000;
 	
 	public TimerControl() {
 		timerList = new ArrayList<>();
