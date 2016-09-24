@@ -72,7 +72,10 @@ public class UseInfo {
 			}
 			count++;
 		}
-		remain = total - used;
+		if(total!=-1)
+			remain = total - used;
+		else
+			remain = -1;
 	}
 	
 	

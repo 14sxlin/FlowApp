@@ -339,7 +339,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 	public static void main(String[] args) {
 		MyLogger.loadConfigure();
 		MyLogger.setLogger(FlowAppMainFrame.class);
-		MyLogger.info("hello there");
+		MyLogger.info("start ..");
 		new FlowAppMainFrame();
 	}
 	

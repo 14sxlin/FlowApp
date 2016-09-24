@@ -16,6 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
+import org.apache.http.client.ClientProtocolException;
+
 import readwrite.ResourcePath;
 import readwrite.UseInfo;
 import tool.MyLogger;
@@ -102,6 +104,17 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
     	logoutButton.addActionListener(this);
     	logoutButton.setEnabled(false);
     	this.add(logoutButton, constraints);
+    	
+    	try {
+			UseInfo.Refresh();
+			setTexts();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
     	if (!ButtonAreaPanel.isWebLost) { 
 			timer = new Timer(TimerControl.FAST_MODE, this);
