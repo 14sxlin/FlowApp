@@ -21,7 +21,6 @@ import javax.swing.SpinnerNumberModel;
 
 import readwrite.MusicList;
 import readwrite.ResourcePath;
-import tool.MusicPlayerWithDialog;
 
 @SuppressWarnings("serial")
 public class AlarmSettingDialog extends JDialog implements ActionListener {
@@ -48,7 +47,6 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 		this.setAlwaysOnTop(true);
 		this.setLayout(new GridLayout(4, 1));
 		this.maxFlow=maxFlow;
-//		musicChooser=new MusicChooser();		
 		model=new SpinnerNumberModel((this.maxFlow-100)/100*100, 0, this.maxFlow, 50);
 		alarmSpin=new JSpinner(model);
 		
@@ -74,19 +72,20 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 //		alarmSpin.setMaximumSize(new Dimension(280, 50));
 //		alarmSpin.setPreferredSize(new Dimension(50, 28));
 		alarmCombo.setPreferredSize(new Dimension(120, 28));
-			this.add(panel);
-			JPanel panel1=new JPanel();
-			sureButton=new JButton("确定");
-			sureButton.addActionListener(this);
-			cancelButton=new JButton("取消");
-			cancelButton.addActionListener(this);
-			panel1.add(sureButton);
+		this.add(panel);
+		JPanel panel1=new JPanel();
+		sureButton=new JButton("确定");
+		sureButton.addActionListener(this);
+		cancelButton=new JButton("取消");
+		cancelButton.addActionListener(this);
+		panel1.add(sureButton);
 			panel1.add(cancelButton);
 			this.add(panel1);
 			this.setResizable(false);
 			this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			this.setVisible(true);
 		}
+		this.getRootPane().setDefaultButton(sureButton);
 	}
 	
 	public void setMaxFlow(int maxFlow)
@@ -108,10 +107,10 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 				if(index>=0&&index<=8)
 				{
 					music = new MusicPlayerWithDialog(getClass().getResourceAsStream("/sounds/"+name)
-							,true,ButtonAreaPanel.alarmhasSet);
+							,true,DisplayControlPanel.alarmhasSet);
 				}
 				else {
-					music=new MusicPlayerWithDialog(new File(musicList.fileMap.get(name)),true,ButtonAreaPanel.alarmhasSet);
+					music=new MusicPlayerWithDialog(new File(musicList.fileMap.get(name)),true,DisplayControlPanel.alarmhasSet);
 				}
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -136,7 +135,7 @@ public class AlarmSettingDialog extends JDialog implements ActionListener {
 				JOptionPane.showMessageDialog(this, "输入错误");	
 			};
 			this.dispose();
-			ButtonAreaPanel.alarmhasSet=true;
+			DisplayControlPanel.alarmhasSet=true;
 		}	
 	}
 

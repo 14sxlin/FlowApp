@@ -1,4 +1,4 @@
-package tool;
+package gui;
 
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
@@ -17,7 +17,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import gui.ButtonAreaPanel;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 public class MusicPlayerWithDialog implements ActionListener, WindowListener {
@@ -93,7 +92,7 @@ public class MusicPlayerWithDialog implements ActionListener, WindowListener {
 		if(e.getActionCommand().equals("ֹͣ"))
 		{	try {				
 				if(asCompenont)
-					ButtonAreaPanel.alarmhasSet=false;
+					DisplayControlPanel.alarmhasSet=false;
 				this.close();
 				controlPanel.dispose();
 			} catch (IOException e1) {

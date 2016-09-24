@@ -16,8 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
 
-import org.apache.http.client.ClientProtocolException;
-
 import readwrite.ResourcePath;
 import readwrite.UseInfo;
 import tool.MyLogger;
@@ -25,6 +23,7 @@ import tool.RequestSender;
 import tool.TimerControl;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class FlowDisplayPanel extends JPanel implements ActionListener {
 	public JTextField usedText,totalText,remainText,nameText;//用来显示流量的数值
 	public JLabel statusLabel;
@@ -105,16 +104,7 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
     	logoutButton.setEnabled(false);
     	this.add(logoutButton, constraints);
     	
-    	try {
-			UseInfo.Refresh();
-			setTexts();
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	setTexts();
     	
     	if (!ButtonAreaPanel.isWebLost) { 
 			timer = new Timer(TimerControl.FAST_MODE, this);
@@ -244,7 +234,8 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 		this.setTexts();
 		if(e.getSource()==logoutButton)
 			try {
-				RequestSender.logout(ResourcePath.SERVERPATH);					
+				RequestSender.logout(ResourcePath.SERVERPATH);	
+				UseInfo.Refresh();
 				this.setTexts();
 				ButtonAreaPanel.loginButton.setEnabled(true);			
 			} catch (IOException e1) {
@@ -252,8 +243,11 @@ public class FlowDisplayPanel extends JPanel implements ActionListener {
 				JOptionPane.showMessageDialog(null, "发送退出信息失败");
 			}
 		
-		//检查退出登录的按钮
 		if(UseInfo.isLogin)
+		{
 			logoutButton.setEnabled(true);
+		}else{
+			logoutButton.setEnabled(false);
+		}
 	}
 }

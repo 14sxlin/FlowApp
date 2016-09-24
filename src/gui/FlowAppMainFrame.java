@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.AWTException;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -24,7 +25,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JSplitPane;
+
+import org.apache.http.client.ClientProtocolException;
 
 import readwrite.AccountManager;
 import readwrite.Configure;
@@ -35,25 +37,26 @@ import tool.TimerControl;
 
 @SuppressWarnings("serial")
 public class FlowAppMainFrame extends JFrame implements ActionListener, ItemListener, WindowListener{
-	private ButtonAreaPanel buttonPanel;
-	private FlowDisplayPanel displayPanel;
-	private JSplitPane split;
+	
+	private DisplayControlPanel displayControlPanel;
 	private JMenuBar menubar;
 	private JMenu menu[];
 	private JMenuItem menuItem[];
 	private SystemTray tray;
 	private TrayIcon trayIcon;
-	public static JCheckBoxMenuItem chekboxItem[];
 	public String[] strMenu= {"账号管理","功能"};
 	public String[] strMenuItem={"修改","删除","设置自登账号","清空"};
 	public String[] strCheckboxItem={"保持最前","精简面板"};
+	
+	public static JCheckBoxMenuItem chekboxItem[];
 	public static SimplifyDialog simplifyDialog;
 	public static boolean autoSelect;
 	public static boolean autoLogin;
-	public static boolean inside=false;//内部的组件
+	public static boolean inside=false;	//内部的组件
 	public static AccountManager am;
-//	public static WebStatus ws;
 	public static TimerControl timeControl;
+	
+	
 	public FlowAppMainFrame() {
 		Configure.setFilePath(ResourcePath.CONFIGPATH);
 		timeControl = new TimerControl();
@@ -71,7 +74,6 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		
 		//GUI界面
 //		this.setTitle("流量");
-		this.setBounds(400, 200, 250, 350);
 		this.setResizable(true);
 	
 		menubar=new JMenuBar();
@@ -99,17 +101,8 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		}
 		chekboxItem[0].setSelected(true);
 		
-		//流量展示区域
-		displayPanel=new FlowDisplayPanel(true);
-		split=new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		split.add(displayPanel);
-		split.setOneTouchExpandable(true);
-		split.setDividerLocation(0.6);
 		
-		//下面的按钮区域
-		buttonPanel=new ButtonAreaPanel(this, am);
-		split.add(buttonPanel);	
-		this.add(split);
+		this.add(displayControlPanel = new DisplayControlPanel(this, am));
 		
 
 		//设置2个状态
@@ -119,6 +112,8 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		this.setAlwaysOnTop(true);
 		this.addWindowListener(this);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		Dimension dimension = getToolkit().getScreenSize();
+    	this.setBounds((int)(dimension.getWidth()/4), (int)(dimension.getHeight()/4),210,370);
 		this.setVisible(true);
 	}
 	
@@ -185,7 +180,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		autoLogin = Configure.GetValueByKey("autoLogin").equals("true")?true:false;
 		if(autoLogin)
 		{	
-			buttonPanel.autoLoginChBox.setSelected(true);
+			displayControlPanel.autoLoginChBox.setSelected(true);
 		}	
 	}
 
@@ -195,8 +190,8 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		try {
 			autoSelect = Configure.GetValueByKey("autoSelect").equals("true")?true:false;
 			if(autoSelect)
-				buttonPanel.autoSelectChBox.setSelected(true);
-			else buttonPanel.autoSelectChBox.setSelected(false);
+				displayControlPanel.autoSelectChBox.setSelected(true);
+			else displayControlPanel.autoSelectChBox.setSelected(false);
 		} catch (NullPointerException e) {
 			MyLogger.fatal(e.getMessage());
 			Configure.createDefaultFile();
@@ -219,9 +214,9 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		{	
 			if (am.usernameList.size()!=0) {
 				new UpdateAccountDialog(this,am);
-				buttonPanel.accountSelectCombo.removeAllItems();
+				displayControlPanel.accountSelectCombo.removeAllItems();
 				for (String c : am.usernameList)
-					buttonPanel.accountSelectCombo.addItem(c);
+					displayControlPanel.accountSelectCombo.addItem(c);
 			}else JOptionPane.showMessageDialog(this, "没有可更改的账号");
 		}
 		
@@ -230,9 +225,9 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		{
 			if (am.usernameList.size()!=0) {
 				new DropDialog(this,am);
-				buttonPanel.accountSelectCombo.removeAllItems();
+				displayControlPanel.accountSelectCombo.removeAllItems();
 				for (String c : am.usernameList)
-					buttonPanel.accountSelectCombo.addItem(c);
+					displayControlPanel.accountSelectCombo.addItem(c);
 			}else JOptionPane.showMessageDialog(this, "没有可删除的账号");
 		}
 		
@@ -247,7 +242,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 						if (f.delete())
 							try {
 								f.createNewFile();
-								buttonPanel.accountSelectCombo.removeAllItems();
+								displayControlPanel.accountSelectCombo.removeAllItems();
 							} catch (IOException e1) {
 								MyLogger.setLogger(this.getClass());
 								MyLogger.fatal("清空账户失败");
@@ -272,7 +267,7 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		//显示精简面板
 		if(chekboxItem[1].isSelected()&&simplifyDialog==null)
 		{		this.setVisible(false);
-				simplifyDialog=new SimplifyDialog(true,displayPanel.timer);
+				simplifyDialog=new SimplifyDialog(true,displayControlPanel.timer);
 		}
 		if(!chekboxItem[1].isSelected()&&simplifyDialog!=null)
 		{	simplifyDialog.dispose();
@@ -340,6 +335,15 @@ public class FlowAppMainFrame extends JFrame implements ActionListener, ItemList
 		MyLogger.loadConfigure();
 		MyLogger.setLogger(FlowAppMainFrame.class);
 		MyLogger.info("start ..");
+		try {
+			UseInfo.Refresh();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		new FlowAppMainFrame();
 	}
 	

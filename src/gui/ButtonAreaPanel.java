@@ -24,13 +24,13 @@ import readwrite.AccountManager;
 import readwrite.Configure;
 import readwrite.ResourcePath;
 import readwrite.UseInfo;
-import tool.MusicPlayerWithDialog;
 import tool.MyLogger;
 import tool.ParamsAdapter;
 import tool.RequestSender;
 import tool.TimerControl;
 
 @SuppressWarnings("serial")
+@Deprecated
 public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListener {
 //	private WebStatus ws;
 	public static boolean isWebLost = false;
@@ -53,7 +53,6 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 	public 	int i=0;
 	public ButtonAreaPanel(JFrame parent,AccountManager am) {
 		this.am = am;
-//		this.ws = ws;
 		this.parent = parent;
 		this.setLayout(new GridLayout(3, 2));
 		alarmButton=new JButton("设置提醒");
@@ -84,6 +83,8 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 						ParamsAdapter.String2List(params)).contains("false"))
 				{
 					JOptionPane.showMessageDialog(parent, "发送登录信息失败,请先退出已登录的账号");
+				}else{
+					UseInfo.Refresh();
 				};
 			}catch (IOException e1) {
 				JOptionPane.showMessageDialog(parent, "发送登录信息失败");
@@ -111,7 +112,6 @@ public class ButtonAreaPanel extends JPanel implements ActionListener, ItemListe
 		if(!isWebLost)
 			timer.start();
 		else loginButton.setEnabled(false);
-//System.out.println("loginState="+ReadStatus.loginStatus);
 		if(UseInfo.isLogin)
 			loginButton.setEnabled(false);
 		
