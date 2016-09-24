@@ -117,7 +117,15 @@ public class DisplayControlPanel extends JPanel implements ActionListener, ItemL
 				MyLogger.info(DisplayControlPanel.class, "try login : "+info);
 				if(info.contains("false"))
 				{
-					JOptionPane.showMessageDialog(parent, "发送登录信息失败,请先退出已登录的账号");
+					if(info.contains("密码错误"))
+						JOptionPane.showMessageDialog(parent, "用户名或密码错误");
+					else{
+						String msg = "";
+						int s = info.indexOf("msg:'");
+						int end = info.indexOf("'",s);
+						JOptionPane.showMessageDialog(parent, msg.substring(s, end));
+					}
+					
 				}else{
 					UseInfo.Refresh();
 				};
